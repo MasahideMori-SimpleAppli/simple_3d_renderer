@@ -1,4 +1,4 @@
-# simple_3d
+# simple_3d_renderer
 
 (en)The explanation is in English and Japanese.  
 (ja)日本語版は(ja)として記載してあります。
