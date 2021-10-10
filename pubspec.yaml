@@ -1,0 +1,18 @@
+name: simple_3d_renderer
+description: Sp3dObj renderer. Includes cameras, lights, worlds and more.
+version: 0.0.1
+repository: https://github.com/MasahideMori1111/simple_3d_renderer
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  simple_3d: ^3.3.0
+  util_simple_3d: ^0.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
