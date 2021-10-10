@@ -19,6 +19,7 @@ Sp3dObjは科学のために作られた3Dフォーマット(Simple 3D Format)�
 
 ## Usage
 ```dart
+import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
 import 'package:util_simple_3d/util_sp3d_geometry.dart';
 import 'package:util_simple_3d/f_sp3d_material.dart';
@@ -27,6 +28,15 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 import 'package:simple_3d_renderer/sp3d_world.dart';
 import 'package:simple_3d_renderer/sp3d_camera.dart';
 import 'package:simple_3d_renderer/sp3d_light.dart';
+
+void main() async {
+  runApp(new MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
 
 class _MyAppState extends State<MyApp> {
   final k = GlobalKey();
@@ -57,7 +67,7 @@ class _MyAppState extends State<MyApp> {
                 Size(800,800),
                 Sp3dV2D(400,400),
                 Sp3dWorld([obj]),
-                // If you want to reduce distortion, shoot from a distance at high magnification. 
+                // If you want to reduce distortion, shoot from a distance at high magnification.
                 Sp3dCamera(Sp3dV3D(0,0,30000), 60000),
                 Sp3dLight(Sp3dV3D(0,0,-1),sync_cam: true)
             )
