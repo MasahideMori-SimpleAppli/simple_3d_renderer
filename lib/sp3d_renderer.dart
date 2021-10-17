@@ -21,7 +21,7 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   final String class_name = 'Sp3dRenderer';
-  final String version = '1';
+  final String version = '2';
   final GlobalKey key;
   final Size size;
   final Sp3dV2D world_origin;
@@ -101,8 +101,10 @@ class Sp3dRenderer extends StatefulWidget {
 class _Sp3dRendererState extends State<Sp3dRenderer> {
   // ドラッグ開始位置
   Sp3dV3D _sp = Sp3dV3D(0, 0, 0);
+
   // 前回のユーザードラッグ位置
   Sp3dV3D _pre_p = Sp3dV3D(0, 0, 0);
+
   // 現在の回転角
   double _angle = 0.0;
 
@@ -123,15 +125,15 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
         onPanUpdate: (DragUpdateDetails dud) {
           setState(() {
             final Sp3dV3D now_p =
-            Sp3dV3D(dud.localPosition.dx, dud.localPosition.dy, 0);
+                Sp3dV3D(dud.localPosition.dx, dud.localPosition.dy, 0);
             final Sp3dV3D move_p = now_p - this._pre_p;
             this._angle += move_p.len();
-            if(this._angle > 360){
+            if (this._angle > 360) {
               this._angle %= 360;
             }
             final Sp3dV3D diff = now_p - this._sp;
             final Sp3dV3D axis = Sp3dV3D(diff.y, diff.x, 0).nor();
-            widget.camera.rotate(axis, this._angle*pi/180);
+            widget.camera.rotate(axis, this._angle * pi / 180);
             _pre_p = now_p;
           });
         },
@@ -156,70 +158,64 @@ class _Sp3dCanvasPainter extends CustomPainter {
 
   @override
   Future<void> paint(Canvas canvas, Size size) async {
-    // カメラで撮影した２次元座標とカメラまでの距離を取得
-    for (Sp3dObj obj in this.w.world.objs) {
-      List<Sp3dV2D> conv2d = this.w.camera.convert(obj, this.w.world_origin);
-      List<Sp3dFaceObj> face_dist = this.w.camera.get_prams(obj, conv2d);
-      // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
-      face_dist
-          .sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
-      // 描画
-      for (Sp3dFaceObj fo in face_dist) {
-        // 0未満が出現したら残りは描画対象外
-        if (fo.dist < 0) {
-          break;
-        }
-        // パスを描画
-        // 塗りつぶしの設定
-        bool isFill = true;
-        double stroke_width = 0;
-        Sp3dMaterial? material;
-        if (fo.face.material_index != null) {
-          material = obj.materials[fo.face.material_index!];
-          isFill = material.is_fill;
-          stroke_width = material.stroke_width;
-        }
-        Paint paint = Paint();
-        List<Color> colors = this.w.light.apply(fo.nsn, fo.cam_theta, material);
-        if (isFill) {
-          if (material != null && material.image_index != null) {
-            // TODO 現在非対応
-          } else {
-            // 塗りつぶし
-            paint.color = colors[0];
-            paint.style = PaintingStyle.fill;
-            Path path = Path();
-            bool isStartPoint = true;
-            for (Sp3dV2D v in fo.vertices2d) {
-              if (isStartPoint) {
-                path.moveTo(v.x, v.y);
-                isStartPoint = false;
-              } else {
-                path.lineTo(v.x, v.y);
-              }
-            }
-            path.close();
-            canvas.drawPath(path, paint);
-          }
-        }
-        // 外枠の描画
-        paint.color = colors[1];
-        paint.strokeWidth = stroke_width;
-        paint.strokeCap = StrokeCap.butt;
-        paint.style = PaintingStyle.stroke;
-        Path path = Path();
-        bool isStartPoint = true;
-        for (Sp3dV2D v in fo.vertices2d) {
-          if (isStartPoint) {
-            path.moveTo(v.x, v.y);
-            isStartPoint = false;
-          } else {
-            path.lineTo(v.x, v.y);
-          }
-        }
-        path.close();
-        canvas.drawPath(path, paint);
+    // 高速化のためにオブジェクトの生成をできるだけ抑える。
+    final Paint paint = Paint();
+    final Path path = Path();
+    // カメラで撮影した２次元座標とカメラまでの距離などを含むデータオブジェクトを取得
+    final List<Sp3dFaceObj> all_faces = this.w.camera.get_prams(this.w.world, this.w.world_origin);
+    // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
+    all_faces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
+    // 描画
+    for (Sp3dFaceObj fo in all_faces) {
+      // パスを描画
+      // 塗りつぶしの設定
+      bool isFill = true;
+      double stroke_width = 0;
+      Sp3dMaterial? material;
+      if (fo.face.material_index != null) {
+        material = fo.obj.materials[fo.face.material_index!];
+        isFill = material.is_fill;
+        stroke_width = material.stroke_width;
       }
+      final List<Color> colors = this.w.light.apply(fo.nsn, fo.cam_theta, material);
+      if (isFill) {
+        if (material != null && material.image_index != null) {
+          // TODO 現在非対応
+        } else {
+          // 塗りつぶし
+          paint.color = colors[0];
+          paint.style = PaintingStyle.fill;
+          bool isStartPoint = true;
+          for (Sp3dV2D v in fo.vertices2d) {
+            if (isStartPoint) {
+              path.moveTo(v.x, v.y);
+              isStartPoint = false;
+            } else {
+              path.lineTo(v.x, v.y);
+            }
+          }
+          path.close();
+          canvas.drawPath(path, paint);
+          path.reset();
+        }
+      }
+      // 外枠の描画
+      paint.color = colors[1];
+      paint.strokeWidth = stroke_width;
+      paint.strokeCap = StrokeCap.butt;
+      paint.style = PaintingStyle.stroke;
+      bool isStartPoint = true;
+      for (Sp3dV2D v in fo.vertices2d) {
+        if (isStartPoint) {
+          path.moveTo(v.x, v.y);
+          isStartPoint = false;
+        } else {
+          path.lineTo(v.x, v.y);
+        }
+      }
+      path.close();
+      canvas.drawPath(path, paint);
+      path.reset();
     }
   }
 

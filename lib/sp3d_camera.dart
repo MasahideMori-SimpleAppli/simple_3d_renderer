@@ -1,6 +1,7 @@
 import 'package:simple_3d/simple_3d.dart';
 import 'package:simple_3d_renderer/sp3d_faceobj.dart';
 import 'package:simple_3d_renderer/sp3d_v2d.dart';
+import 'package:simple_3d_renderer/sp3d_world.dart';
 
 /// (en)It is a camera for shooting Sp3dWorld.
 ///
@@ -13,7 +14,7 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 class Sp3dCamera {
 
   final String class_name = 'Sp3dCamera';
-  final String version = '1';
+  final String version = '2';
   Sp3dV3D position;
   double focus_length;
   late Sp3dV3D rotate_axis;
@@ -99,7 +100,7 @@ class Sp3dCamera {
     List<Sp3dV2D> r = [];
     for(Sp3dV3D i in obj.vertices){
       // 実質的にはワールド側全体が回転している。このため、get_pramsの内部計算ではrotated_positionが併用される。
-      Sp3dV3D v = i.rotated(this.rotate_axis, this.radian);
+      final Sp3dV3D v = i.rotated(this.rotate_axis, this.radian);
       r.add(
           Sp3dV2D(
               origin.x + this.focus_length * (v.x - this.position.x) / (this.position.z - v.z),
@@ -111,32 +112,39 @@ class Sp3dCamera {
   }
 
   /// (en)Generates and returns an arithmetic data object for drawing.
-  /// The return value(dist) will be -1 if the target Face is behind the camera.
+  /// The return value does not include data that is not drawn.
   ///
-  /// (ja)Generates and returns an arithmetic data object for drawing.
-  /// 戻り値(dist)には対象Faceがカメラから見て裏側である場合は-1が入ります。
+  /// (ja)描画用のデータオブジェクトを生成して返します。
+  /// 戻り値には描画対象外のデータは含まれません。
   ///
-  /// * [obj] : Sp3dObj in the world.
-  /// * [conv2d] : 2D converted vertices.
+  /// * [world] : The World Obj.
+  /// * [origin] : The world origin in canvas.
   ///
   /// Returns calculated data.
-  List<Sp3dFaceObj> get_prams(Sp3dObj obj, List<Sp3dV2D> conv2d) {
+  List<Sp3dFaceObj> get_prams(Sp3dWorld world, Sp3dV2D origin) {
     List<Sp3dFaceObj> r = [];
-    for(Sp3dFragment i in obj.fragments){
-      for(Sp3dFace j in i.faces){
-        final List<Sp3dV3D> v = j.get_vertices(obj);
-        final Sp3dV3D n = Sp3dV3D.surface_normal(v).nor();
-        final Sp3dV3D c = Sp3dV3D.ave(v);
-        // ここでは回転後の値を使う。
-        final Sp3dV3D d = (c - this.rotated_position).nor();
-        final double cam_theta = Sp3dV3D.dot(n, d);
-        // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
-        if(cam_theta >= 0){
-          r.add(Sp3dFaceObj(i, j, v, _get2dV(j, conv2d), n, cam_theta, Sp3dV3D.dist(c, this.rotated_position)));
-        }
-        else{
-          // 距離でソートする時に高速化出来るようにマイナス値を設定。
-          r.add(Sp3dFaceObj(i, j, v, _get2dV(j, conv2d), n, cam_theta, -1.0));
+    for(Sp3dObj obj in world.objs) {
+      final List<Sp3dV2D> conv2d = this.convert(obj, origin);
+      for (Sp3dFragment i in obj.fragments) {
+        for (Sp3dFace j in i.faces) {
+          final List<Sp3dV3D> v = j.get_vertices(obj);
+          final Sp3dV3D n = Sp3dV3D.surface_normal(v).nor();
+          final Sp3dV3D c = Sp3dV3D.ave(v);
+          // ここでは回転後の値を使う。
+          final Sp3dV3D d = (c - this.rotated_position).nor();
+          final double cam_theta = Sp3dV3D.dot(n, d);
+          // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
+          if (cam_theta >= 0) {
+            r.add(Sp3dFaceObj(
+                obj,
+                i,
+                j,
+                v,
+                _get2dV(j, conv2d),
+                n,
+                cam_theta,
+                Sp3dV3D.dist(c, this.rotated_position)));
+          }
         }
       }
     }

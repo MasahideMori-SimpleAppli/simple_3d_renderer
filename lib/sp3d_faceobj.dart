@@ -12,6 +12,7 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 ///
 class Sp3dFaceObj {
 
+  final Sp3dObj obj;
   final Sp3dFragment parent;
   final Sp3dFace face;
   final List<Sp3dV3D> vertices3d;
@@ -22,6 +23,6 @@ class Sp3dFaceObj {
   final double cam_theta;
   final double dist;
 
-  Sp3dFaceObj(this.parent, this.face, this.vertices3d, this.vertices2d, this.nsn, this.cam_theta, this.dist);
+  Sp3dFaceObj(this.obj, this.parent, this.face, this.vertices3d, this.vertices2d, this.nsn, this.cam_theta, this.dist);
 
 }
