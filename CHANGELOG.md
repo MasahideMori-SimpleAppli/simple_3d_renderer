@@ -1,3 +1,7 @@
+## 0.0.4
+
+* Fixed Usage of README.md.
+
 ## 0.0.3
 
 * Fixed a bug where the rendering order was not accurate when there were multiple objects in the world.

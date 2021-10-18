@@ -49,6 +49,8 @@ class _MyAppState extends State<MyApp> {
     obj = Util_Sp3dGeometry.cube(200,200,200,4,4,4);
     obj.materials.add(F_Sp3dMaterial.green);
     obj.fragments[0].faces[0].material_index=1;
+    obj.materials[0] = F_Sp3dMaterial.grey..stroke_color=Color.fromARGB(255, 0, 0, 255);
+    obj.rotate(Sp3dV3D(1,1,0).nor(), 30*3.14/180);
   }
 
   @override
