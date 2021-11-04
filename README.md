@@ -112,8 +112,12 @@ class _MyAppState extends State<MyApp> {
 ![Cube Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Util_Sp3dGeometry/cube_sample1.png)
 
 ## Use Image File
-(en)For example, rewrite as follows.  
-(ja)例えば、以下のように書き替えます。  
+(en)For example, rewrite sample code as follows.(*Note that some unnecessary parameters remain for simplicity)  
+(ja)例えば、サンプルコードを以下のように書き替えます。(※簡単のために、不要なパラメータも残っていることに注意してください)  
+
+### sample_image.png
+![sample_image.png](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/sample_image.png)
+
 ```dart
   // Chenge Cube of initState().
   Sp3dObj obj = Util_Sp3dGeometry.cube(200,200,200,1,1,1);
@@ -144,6 +148,23 @@ class _MyAppState extends State<MyApp> {
   }
 ```
 ![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample1.png)
+
+### Triangle mesh
+(en)If the drawing destination of the image is a triangular mesh, the image is automatically divided into triangles with the vertices at the upper left, lower left, and lower right, and displayed.  
+(ja)画像の描画先が三角メッシュの場合、画像は左上、左下、右下を頂点とする三角形に自動で分割されて表示されます。
+![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample2.png)
+
+(en)You can also use the Sp3dMaterial parameters to control the cutout position with respect to the triangular mesh.  
+*Note that the size of the image of paste to cone is (width, height) = (128, 128). Since texture_coordinates specifies the position where you want to cut out the image, it indicate the points on the image. And this image is (0,0) in the upper left and (128,128) in the lower right.  
+(ja)Sp3dMaterialのパラメータを使用して、三角メッシュに対する切り出し位置をコントロールすることも出来ます。  
+ここでは、張り付けたい画像のサイズが(width, height)=(128, 128)であることに注意してください。texture_coordinatesは画像の切り出したい位置を指定するため、３D空間では無く画像上の点を示します。そして、この画像は左上が(0,0)、右下が(128,128)です。
+```dart
+Sp3dObj obj = Util_Sp3dGeometry.cone(100,200);
+obj.materials[0].stroke_color=Color.fromARGB(255, 0, 255, 0);
+obj.materials[0].texture_coordinates = [Offset(0,0),Offset(64,128),Offset(128,0)];
+```
+![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample3_custom_crop.png)
+
 
 ## Support
 (en)If you need paid support, please contact my company.  
