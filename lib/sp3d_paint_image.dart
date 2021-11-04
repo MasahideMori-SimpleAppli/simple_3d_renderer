@@ -96,18 +96,28 @@ class Sp3dPaintImage {
   ///
   /// Returns Vertices of this material.
   Vertices update_vertices(Sp3dFaceObj fo) {
-    final List<Offset> verts = [
-      Offset(fo.vertices2d[0].x, fo.vertices2d[0].y),
-      Offset(fo.vertices2d[1].x, fo.vertices2d[1].y),
-      Offset(fo.vertices2d[2].x, fo.vertices2d[2].y),
-      Offset(fo.vertices2d[2].x, fo.vertices2d[2].y),
-      Offset(fo.vertices2d[3].x, fo.vertices2d[3].y),
-      Offset(fo.vertices2d[0].x, fo.vertices2d[0].y)
-    ];
+    late List<Offset> verts;
+    if(fo.vertices2d.length==4) {
+      verts = [
+        Offset(fo.vertices2d[0].x, fo.vertices2d[0].y),
+        Offset(fo.vertices2d[1].x, fo.vertices2d[1].y),
+        Offset(fo.vertices2d[2].x, fo.vertices2d[2].y),
+        Offset(fo.vertices2d[2].x, fo.vertices2d[2].y),
+        Offset(fo.vertices2d[3].x, fo.vertices2d[3].y),
+        Offset(fo.vertices2d[0].x, fo.vertices2d[0].y)
+      ];
+    }
+    else{
+      verts = [
+        Offset(fo.vertices2d[0].x, fo.vertices2d[0].y),
+        Offset(fo.vertices2d[1].x, fo.vertices2d[1].y),
+        Offset(fo.vertices2d[2].x, fo.vertices2d[2].y)
+      ];
+    }
     final int list_end = fo.vertices2d.length == 4 ? 6 : 3;
     return Vertices(
       VertexMode.triangleStrip,
-      verts.sublist(0, list_end),
+      verts,
       textureCoordinates: this.textureCoordinates.sublist(0, list_end),
       colors: this.colors.sublist(0, list_end),
       indices: this.indices.sublist(0, list_end),
