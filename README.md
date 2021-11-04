@@ -155,9 +155,9 @@ class _MyAppState extends State<MyApp> {
 ![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample2.png)
 
 (en)You can also use the Sp3dMaterial parameters to control the cutout position with respect to the triangular mesh.  
-*Note that the size of the image of paste to cone is (width, height) = (128, 128). Since texture_coordinates specifies the position where you want to cut out the image, it indicate the points on the image. And this image is (0,0) in the upper left and (128,128) in the lower right. In other words, the sample is cut out at the upper left, the middle of the lower side, and the upper right.  
+*Note that the size of the image of paste to cone is (width, height) = (128, 128). Since texture_coordinates specifies the position where you want to cut out the image, it indicate the points on the image. And this image is (0,0) in the upper left and (128,128) in the lower right. For example, the following sample is cut out at the upper left, the middle of the lower side, and the upper right.  
 (ja)Sp3dMaterialのパラメータを使用して、三角メッシュに対する切り出し位置をコントロールすることも出来ます。  
-ここでは、張り付けたい画像のサイズが(width, height)=(128, 128)であることに注意してください。texture_coordinatesは画像の切り出したい位置を指定するため、３D空間では無く画像上の点を示します。そして、この画像は左上が(0,0)、右下が(128,128)です。つまり、サンプルは左上、下側の中間、右上で切り出しています。  
+ここでは、張り付けたい画像のサイズが(width, height)=(128, 128)であることに注意してください。texture_coordinatesは画像の切り出したい位置を指定するため、３D空間では無く画像上の点を示します。そして、この画像は左上が(0,0)、右下が(128,128)です。例えば以下のサンプルは左上、下側の中間、右上で切り出しています。  
 ```dart
 Sp3dObj obj = Util_Sp3dGeometry.cone(100,200);
 obj.materials[0].stroke_color=Color.fromARGB(255, 0, 255, 0);
