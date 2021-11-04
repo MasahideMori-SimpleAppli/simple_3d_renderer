@@ -151,7 +151,7 @@ class _MyAppState extends State<MyApp> {
 
 ### Triangle mesh
 (en)If the drawing destination of the image is a triangular mesh, the image is automatically divided into triangles with the vertices at the upper left, lower left, and lower right, and displayed.  
-(ja)画像の描画先が三角メッシュの場合、画像は左上、左下、右下を頂点とする三角形に自動で分割されて表示されます。
+(ja)画像の描画先が三角メッシュの場合、画像は左上、左下、右下を頂点とする三角形に自動で分割されて表示されます。  
 ![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample2.png)
 
 (en)You can also use the Sp3dMaterial parameters to control the cutout position with respect to the triangular mesh.  
