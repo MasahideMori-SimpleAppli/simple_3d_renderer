@@ -40,47 +40,118 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final k = GlobalKey();
-  late Sp3dObj obj;
+  late List<Sp3dObj> objs = [];
+  late Sp3dWorld world;
+  bool isLoaded = false;
 
   @override
   void initState() {
     super.initState();
     // Create Sp3dObj.
-    obj = Util_Sp3dGeometry.cube(200,200,200,4,4,4);
-    obj.materials.add(F_Sp3dMaterial.green);
+    Sp3dObj obj = Util_Sp3dGeometry.cube(200,200,200,4,4,4);
+    obj.materials.add(F_Sp3dMaterial.green.deep_copy());
     obj.fragments[0].faces[0].material_index=1;
     obj.materials[0] = F_Sp3dMaterial.grey..stroke_color=Color.fromARGB(255, 0, 0, 255);
     obj.rotate(Sp3dV3D(1,1,0).nor(), 30*3.14/180);
+    this.objs.add(obj);
+    loadImage();
+  }
+
+  void loadImage() async {
+    this.world = Sp3dWorld(objs);
+    this.world.init_images().then(
+        (List<Sp3dObj> error_objs){
+          setState(() {
+            this.isLoaded = true;
+          });
+        }
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Sp3dRenderer',
-      home: Scaffold(
-        appBar: AppBar(
+    if (!this.isLoaded) {
+      return MaterialApp(
+          title: 'Sp3dRenderer',
+          home: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Color.fromARGB(255, 0, 255, 0),
+              ),
+              backgroundColor: Color.fromARGB(255, 33, 33, 33),
+              body: Container()
+          )
+      );
+    }
+    else {
+      return MaterialApp(
+        title: 'Sp3dRenderer',
+        home: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 0, 255, 0),
+          ),
           backgroundColor: Color.fromARGB(255, 33, 33, 33),
+          body: Column(
+            children: [
+              Sp3dRenderer(
+                  k,
+                  Size(800, 800),
+                  Sp3dV2D(400, 400),
+                  this.world,
+                  // If you want to reduce distortion, shoot from a distance at high magnification.
+                  Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
+                  Sp3dLight(Sp3dV3D(0, 0, -1), sync_cam: true)
+              )
+            ],
+          ),
         ),
-        backgroundColor: Color.fromARGB(255, 33, 33, 33),
-        body: Column(
-          children: [
-            Sp3dRenderer(
-                k,
-                Size(800,800),
-                Sp3dV2D(400,400),
-                Sp3dWorld([obj]),
-                // If you want to reduce distortion, shoot from a distance at high magnification.
-                Sp3dCamera(Sp3dV3D(0,0,30000), 60000),
-                Sp3dLight(Sp3dV3D(0,0,-1),sync_cam: true)
-            )
-          ],
-        ),
-      ),
-    );
+      );
+    }
   }
 }
 ```
-![Cube Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Util_Sp3dGeometry/cube_sample1.png "Cube Sample")
+![Cube Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Util_Sp3dGeometry/cube_sample1.png)
+
+## Use Image File
+(en)For example, rewrite as follows.  
+(ja)例えば、以下のように書き替えます。  
+```dart
+  // Chenge Cube of initState().
+  Sp3dObj obj = Util_Sp3dGeometry.cube(200,200,200,1,1,1);
+  --------------------------------------------------------------------
+  // Chenge function
+  void loadImage() async {
+    this.objs[0].fragments[0].faces[0].material_index=1;
+    this.objs[0].fragments[0].faces[1].material_index=1;
+    this.objs[0].fragments[0].faces[2].material_index=1;
+    this.objs[0].fragments[0].faces[3].material_index=1;
+    this.objs[0].materials[1].image_index = 0;
+    // You can also use the image by adding the image directly under the project like this and listing the asset in pubspec.yaml.
+    this.objs[0].images.add(await _readFileBytes("./assets/images/sample_image.png"));
+    this.world = Sp3dWorld(objs);
+    this.world.init_images().then(
+            (List<Sp3dObj> error_objs){
+          setState(() {
+            this.isLoaded = true;
+          });
+        }
+    );
+  }
+
+  // Add function
+  Future<Uint8List> _readFileBytes(String filePath) async {
+    ByteData bd = await rootBundle.load(filePath);
+    return bd.buffer.asUint8List(bd.offsetInBytes,bd.lengthInBytes);
+  }
+```
+![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample1.png)
+
+## Support
+(en)If you need paid support, please contact my company.  
+[SimpleAppli Inc.](https://simpleappli.com/en/index_en.html)  
+(ja)もし何らかの理由で有償のサポートが必要な場合は私の会社に問い合わせてください。  
+このパッケージは私が個人で開発していますが、会社経由でサポートできる場合があります。  
+[合同会社シンプルアプリ](https://simpleappli.com/index.html)  
+
 ## Rendering Speed (10 paint average)
 (en)It is a consideration of the time required for drawing on a web browser 
 in debug mode on a midrange machine with CPU 3.40Ghz and 16GB memory as of Sp3dRenderer ver 0.0.3.  
@@ -112,10 +183,6 @@ Sp3dObj obj = Util_Sp3dGeometry.sphere(2.5);
 - 1000 sphere 473 ms / paint.
 - 2500 sphere 1219 ms / paint.
 - 5000 sphere 2532 ms / paint. (360000 vertices)
-
-## About future development
-(en)Currently, it does not support drawing of image files. I plan to implement it in the future.  
-(ja)現在、画像ファイルの描画に対応していません。今後実装する予定です。
 
 ## About version control
 (en)The C part will be changed at the time of version upgrade.  

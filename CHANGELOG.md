@@ -1,3 +1,8 @@
+## 1.0.0
+
+* Added support for drawing PNG image files.
+* Changes due to base package updates.
+
 ## 0.0.4
 
 * Fixed Usage of README.md.

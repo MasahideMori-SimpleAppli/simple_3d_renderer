@@ -21,7 +21,7 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   final String class_name = 'Sp3dRenderer';
-  final String version = '2';
+  final String version = '3';
   final GlobalKey key;
   final Size size;
   final Sp3dV2D world_origin;
@@ -153,15 +153,15 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
 
 class _Sp3dCanvasPainter extends CustomPainter {
   final Sp3dRenderer w;
+  final Paint p = Paint();
+  final Path path = Path();
 
   _Sp3dCanvasPainter(this.w);
 
   @override
-  Future<void> paint(Canvas canvas, Size size) async {
-    // 高速化のためにオブジェクトの生成をできるだけ抑える。
-    final Paint paint = Paint();
-    final Path path = Path();
-    // カメラで撮影した２次元座標とカメラまでの距離などを含むデータオブジェクトを取得
+  void paint(Canvas canvas, Size size) {
+    // カメラで撮影した２次元座標とカメラまでの距離などを含むデータオブジェクトを取得。
+    // なお、描画対象外のオブジェクトはここで除外される。
     final List<Sp3dFaceObj> all_faces = this.w.camera.get_prams(this.w.world, this.w.world_origin);
     // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
     all_faces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
@@ -180,11 +180,18 @@ class _Sp3dCanvasPainter extends CustomPainter {
       final List<Color> colors = this.w.light.apply(fo.nsn, fo.cam_theta, material);
       if (isFill) {
         if (material != null && material.image_index != null) {
-          // TODO 現在非対応
+          if(w.world.paint_images.containsKey(material)) {
+            if (w.world.paint_images[material] != null) {
+              canvas.drawVertices(
+                  w.world.paint_images[material]!.update_vertices(fo),
+                  BlendMode.srcOver,
+                  w.world.paint_images[material]!.get_paint());
+            }
+          }
         } else {
           // 塗りつぶし
-          paint.color = colors[0];
-          paint.style = PaintingStyle.fill;
+          p.color = colors[0];
+          p.style = PaintingStyle.fill;
           bool isStartPoint = true;
           for (Sp3dV2D v in fo.vertices2d) {
             if (isStartPoint) {
@@ -195,27 +202,29 @@ class _Sp3dCanvasPainter extends CustomPainter {
             }
           }
           path.close();
-          canvas.drawPath(path, paint);
+          canvas.drawPath(path, p);
           path.reset();
         }
       }
       // 外枠の描画
-      paint.color = colors[1];
-      paint.strokeWidth = stroke_width;
-      paint.strokeCap = StrokeCap.butt;
-      paint.style = PaintingStyle.stroke;
-      bool isStartPoint = true;
-      for (Sp3dV2D v in fo.vertices2d) {
-        if (isStartPoint) {
-          path.moveTo(v.x, v.y);
-          isStartPoint = false;
-        } else {
-          path.lineTo(v.x, v.y);
+      if(stroke_width > 0) {
+        p.color = colors[1];
+        p.strokeWidth = stroke_width;
+        p.strokeCap = StrokeCap.butt;
+        p.style = PaintingStyle.stroke;
+        bool isStartPoint = true;
+        for (Sp3dV2D v in fo.vertices2d) {
+          if (isStartPoint) {
+            path.moveTo(v.x, v.y);
+            isStartPoint = false;
+          } else {
+            path.lineTo(v.x, v.y);
+          }
         }
+        path.close();
+        canvas.drawPath(path, p);
+        path.reset();
       }
-      path.close();
-      canvas.drawPath(path, paint);
-      path.reset();
     }
   }
 
