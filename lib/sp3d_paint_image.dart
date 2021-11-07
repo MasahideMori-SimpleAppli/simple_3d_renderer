@@ -13,9 +13,6 @@ import 'package:simple_3d_renderer/sp3d_faceobj.dart';
 /// First edition creation date 2021-10-31 20:13:16
 ///
 class Sp3dPaintImage {
-  final String class_name = 'Sp3dPaintImage';
-  final String version = '1';
-
   // マテリアルの各種情報。
   final Sp3dMaterial material;
 
@@ -63,7 +60,7 @@ class Sp3dPaintImage {
   /// * [image] : Sp3dObj.
   ///
   /// Returns: If success, true.
-  Future<bool> create_shader(Image image) async {
+  Future<bool> createShader(Image image) async {
     try {
       final Float64List mf64 = this.f64.sublist(0);
       this.p.shader =
@@ -78,24 +75,24 @@ class Sp3dPaintImage {
     }
   }
 
-  /// (en)Gets the paint class with the shader set. It can only be called after executing the create_shader function.
+  /// (en)Gets the paint class with the shader set. This can only be called after executing the create_shader function.
   ///
   /// (ja)シェーダーが設定されたペイントクラスを取得します。create_shader functionを実行した後でしか呼び出せません。
   ///
   /// Returns paint class.
-  Paint get_paint() {
+  Paint getPaint() {
     return this.p;
   }
 
   /// (en)Generate vertices for drawing internally. You can draw this return value with canvas.drawVertices.
-  /// e.g. canvas.drawVertices(update_vertices(fo), ui.BlendMode.srcOver, this_class.get_paint());
+  /// e.g. canvas.drawVertices(updateVertices(fo), ui.BlendMode.srcOver, this_class.get_paint());
   ///
   /// (ja)描画用のverticesを生成します。戻り値をcanvas.drawVerticesで描画できます。
   ///
   /// * [fo] : face object.
   ///
   /// Returns Vertices of this material.
-  Vertices update_vertices(Sp3dFaceObj fo) {
+  Vertices updateVertices(Sp3dFaceObj fo) {
     late List<Offset> verts;
     if(fo.vertices2d.length==4) {
       verts = [
@@ -114,13 +111,13 @@ class Sp3dPaintImage {
         Offset(fo.vertices2d[2].x, fo.vertices2d[2].y)
       ];
     }
-    final int list_end = fo.vertices2d.length == 4 ? 6 : 3;
+    final int listEnd = fo.vertices2d.length == 4 ? 6 : 3;
     return Vertices(
       VertexMode.triangleStrip,
       verts,
-      textureCoordinates: this.textureCoordinates.sublist(0, list_end),
-      colors: this.colors.sublist(0, list_end),
-      indices: this.indices.sublist(0, list_end),
+      textureCoordinates: this.textureCoordinates.sublist(0, listEnd),
+      colors: this.colors.sublist(0, listEnd),
+      indices: this.indices.sublist(0, listEnd),
     );
   }
 
@@ -128,7 +125,7 @@ class Sp3dPaintImage {
   ///
   /// (ja)画像の切り出し情報を設定します。
   List<Offset> _getTextureCoordinates(Size imageSize) {
-    return this.material.texture_coordinates!= null ? this.material.texture_coordinates! :
+    return this.material.textureCoordinates!= null ? this.material.textureCoordinates! :
     [
       Offset(0.0, 0.0),
       Offset(0.0, imageSize.height),

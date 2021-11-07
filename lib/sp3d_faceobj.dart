@@ -20,9 +20,9 @@ class Sp3dFaceObj {
   // normalized surface normal vector
   final Sp3dV3D nsn;
   // The orientation between the face and the camera Θ.
-  final double cam_theta;
+  final double camTheta;
   final double dist;
 
-  Sp3dFaceObj(this.obj, this.parent, this.face, this.vertices3d, this.vertices2d, this.nsn, this.cam_theta, this.dist);
+  Sp3dFaceObj(this.obj, this.parent, this.face, this.vertices3d, this.vertices2d, this.nsn, this.camTheta, this.dist);
 
 }

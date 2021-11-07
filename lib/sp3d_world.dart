@@ -12,40 +12,40 @@ import 'package:simple_3d_renderer/sp3d_paint_image.dart';
 /// First edition creation date 2021-09-30 14:58:34
 ///
 class Sp3dWorld {
-  final String class_name = 'Sp3dWorld';
+  final String className = 'Sp3dWorld';
   final String version = '2';
   List<Sp3dObj> objs;
 
   // コンバートされた各オブジェクトごとの画像情報
-  Map<Sp3dObj, Map<int, Image>> converted_images = {};
+  Map<Sp3dObj, Map<int, Image>> convertedImages = {};
 
   // レンダリング情報を構成するためのイメージのMap。構成に失敗したイメージはnullが入る。
-  Map<Sp3dMaterial, Sp3dPaintImage?> paint_images = {};
+  Map<Sp3dMaterial, Sp3dPaintImage?> paintImages = {};
 
   /// Constructor
   /// * [objs] : World obj.
   Sp3dWorld(this.objs);
 
-  Sp3dWorld deep_copy() {
+  Sp3dWorld deepCopy() {
     return Sp3dWorld(this.objs);
   }
 
-  Map<String, dynamic> to_dict() {
+  Map<String, dynamic> toDict() {
     Map<String, dynamic> d = {};
-    d['class_name'] = this.class_name;
+    d['class_name'] = this.className;
     d['version'] = this.version;
     List<Sp3dObj> mobjs = [];
     for (Sp3dObj i in this.objs) {
-      mobjs.add(i.deep_copy());
+      mobjs.add(i.deepCopy());
     }
     d['objs'] = mobjs;
     return d;
   }
 
-  static Sp3dWorld from_dict(Map<String, dynamic> src) {
+  static Sp3dWorld fromDict(Map<String, dynamic> src) {
     List<Sp3dObj> mobjs = [];
     for (Map<String, dynamic> i in src['objs']) {
-      mobjs.add(Sp3dObj.from_dict(i));
+      mobjs.add(Sp3dObj.fromDict(i));
     }
     return Sp3dWorld(mobjs);
   }
@@ -64,24 +64,24 @@ class Sp3dWorld {
   /// (ja)レンダリング用の画像ファイルを読み込んで初期化します。
   /// Return : If an error occurs, it returns a list of the objects in which the error occurred.
   /// If normal, an empty array is returned.
-  Future<List<Sp3dObj>> init_images() async {
+  Future<List<Sp3dObj>> initImages() async {
     Map<Sp3dObj, bool> r = {};
     for (Sp3dObj obj in this.objs) {
       for (Sp3dMaterial m in obj.materials) {
         try {
-          if (m.image_index != null) {
-            Image img = await _bytesToImage(obj.images[m.image_index!]);
-            if (this.converted_images.containsKey(obj)) {
-              this.converted_images[obj]![m.image_index!] = img;
+          if (m.imageIndex != null) {
+            Image img = await _bytesToImage(obj.images[m.imageIndex!]);
+            if (this.convertedImages.containsKey(obj)) {
+              this.convertedImages[obj]![m.imageIndex!] = img;
             } else {
-              this.converted_images[obj] = {m.image_index!: img};
+              this.convertedImages[obj] = {m.imageIndex!: img};
             }
-            Sp3dPaintImage p_image = Sp3dPaintImage(m);
-            p_image.create_shader(img);
-            this.paint_images[m] = p_image;
+            Sp3dPaintImage pImg = Sp3dPaintImage(m);
+            pImg.createShader(img);
+            this.paintImages[m] = pImg;
           }
         } catch (e) {
-          this.paint_images[m] = null;
+          this.paintImages[m] = null;
           r[obj] = false;
         }
       }
@@ -89,14 +89,29 @@ class Sp3dWorld {
     return r.keys.toList();
   }
 
-  /// (en)Copy the object to the specified coordinates in the world.
+  /// (en)Places the object at the specified coordinates in the world.
   ///
-  /// (ja)ワールド内の指定座標にオブジェクトをコピーして設置します。
+  /// (ja)ワールド内の指定座標にオブジェクトを設置します。
   ///
   /// * [obj] : target obj.
   /// * [coordinate] : paste position.
   void add(Sp3dObj obj, Sp3dV3D coordinate) {
-    this.objs.add(obj.deep_copy().move(coordinate));
+    this.objs.add(obj.move(coordinate));
+  }
+
+  /// (en)Gets the object with the specified id.
+  ///
+  /// (ja)指定されたidを持つオブジェクトを取得します。
+  ///
+  /// * [id] : target obj id.
+  /// Return : If target does not exist, return null.
+  Sp3dObj? get(String id) {
+    for(Sp3dObj i in this.objs){
+      if(i.id == id){
+        return i;
+      }
+    }
+    return null;
   }
 
   /// (en)Removes the specified object from the world.
@@ -107,4 +122,18 @@ class Sp3dWorld {
   void remove(Sp3dObj obj) {
     this.objs.remove(obj);
   }
+
+  /// (en)Removes all objects with the specified ID from the world.
+  ///
+  /// (ja)指定されたIDを持つ全てのオブジェクトをワールドから取り除きます。
+  ///
+  /// * [id] : target obj.
+  void removeAt(String id) {
+    for(Sp3dObj i in [...this.objs]){
+      if(i.id == id){
+        this.objs.remove(i);
+      }
+    }
+  }
+
 }

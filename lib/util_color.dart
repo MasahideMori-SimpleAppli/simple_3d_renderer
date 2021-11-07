@@ -9,7 +9,7 @@ import 'dart:ui';
 ///
 /// First edition creation date 2021-05-14 14:25:59
 ///
-class Util_Color {
+class UtilColor {
 
 
   /// (en)Converts the double value specified by 0 to 1 to RGBA.
@@ -52,7 +52,7 @@ class Util_Color {
   /// Returns Color obj.
   static Color random({bool isConvenient=true}) {
     Random rand = Random();
-    List<List<List<double>>> clist =[
+    List<List<List<double>>> cList =[
       [
         [1, rand.nextDouble(), rand.nextDouble()],
         [rand.nextDouble(), 1, rand.nextDouble()],
@@ -67,7 +67,7 @@ class Util_Color {
     int select = rand.nextInt(2);
     int index = rand.nextInt(3);
     if(isConvenient){
-      return toRGBAd(clist[select][index][0],clist[select][index][1],clist[select][index][2],);
+      return toRGBAd(cList[select][index][0],cList[select][index][1],cList[select][index][2],);
     }
     else {
       return toRGBAd(rand.nextDouble(), rand.nextDouble(), rand.nextDouble());

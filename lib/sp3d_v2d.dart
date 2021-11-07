@@ -9,8 +9,8 @@
 ///
 class Sp3dV2D {
 
-  final String class_name = 'Sp3dV2D';
-  final String version = '1';
+  final String className = 'Sp3dV2D';
+  final String version = '2';
   double x;
   double y;
 
@@ -19,20 +19,20 @@ class Sp3dV2D {
   /// * [y] : y.
   Sp3dV2D(this.x, this.y);
 
-  Sp3dV2D deep_copy(){
+  Sp3dV2D deepCopy(){
     return Sp3dV2D(this.x, this.y);
   }
 
-  Map<String, dynamic> to_dict(){
+  Map<String, dynamic> toDict(){
     Map<String, dynamic> d = {};
-    d['class_name'] = this.class_name;
+    d['class_name'] = this.className;
     d['version'] = this.version;
     d['x'] = this.x;
     d['y'] = this.y;
     return d;
   }
 
-  static Sp3dV2D from_dict(Map<String, dynamic> src){
+  static Sp3dV2D fromDict(Map<String, dynamic> src){
     return Sp3dV2D(src['x'], src['y']);
   }
 

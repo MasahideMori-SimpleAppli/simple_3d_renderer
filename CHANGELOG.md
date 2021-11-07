@@ -1,3 +1,18 @@
+## 2.0.0
+
+* Changed class name and class member name to lower camel case.
+* Separated the Japanese README file.
+* Sp3dWorld's add function no longer internally copies Sp3dObj for efficiency and direct manipulation.
+* Added get and removeAt functions to Sp3dWorld.
+
+## 1.0.2
+
+* Update README.
+
+## 1.0.1
+
+* Bug fix of 3 point mesh.
+
 ## 1.0.0
 
 * Added support for drawing PNG image files.
