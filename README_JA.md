@@ -149,6 +149,7 @@ class _MyAppState extends State<MyApp> {
 Sp3dMaterialのパラメータを使用して、三角メッシュに対する切り出し位置をコントロールすることも出来ます。  
 ここでは、張り付けたい画像のサイズが(width, height)=(128, 128)であることに注意してください。textureCoordinatesは画像の切り出したい位置を指定するため、３D空間では無く画像上の点を示します。
 そして、この画像は左上が(0,0)、右下が(128,128)です。例えば以下のサンプルは左上、下側の中間、右上で切り出しています。  
+なお、四角メッシュの場合は、三角形２つの指定が必要なため、頂点は6つ必要になります。  
 ```dart
 Sp3dObj obj = UtilSp3dGeometry.cone(100,200);
 obj.materials[0].strokeColor = Color.fromARGB(255, 0, 255, 0);

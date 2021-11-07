@@ -152,6 +152,7 @@ You can also use the Sp3dMaterial parameters to control the cutout position with
 Since textureCoordinates specifies the position where you want to cut out the image, it indicate the points on the image.
 And this image is (0,0) in the upper left and (128,128) in the lower right.
 For example, the following sample is cut out at the upper left, the middle of the lower side, and the upper right.  
+In the case of a square mesh, it is necessary to specify two triangles, so six vertices are required.  
 ```dart
 Sp3dObj obj = UtilSp3dGeometry.cone(100,200);
 obj.materials[0].strokeColor = Color.fromARGB(255, 0, 255, 0);
