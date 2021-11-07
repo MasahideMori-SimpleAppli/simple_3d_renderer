@@ -1,7 +1,7 @@
 # simple_3d_renderer
 
-(en)Japanese ver is [here]().  
-(ja)日本語版は[ここ]()にあります。
+(en)Japanese ver is [here](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/blob/main/README_JA.md).  
+(ja)日本語版は[ここ](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/blob/main/README_JA.md)にあります。
 
 ## Overview
 This package is for rendering Sp3dObj.  
