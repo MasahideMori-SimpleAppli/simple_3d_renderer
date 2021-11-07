@@ -94,7 +94,7 @@ class Sp3dPaintImage {
   /// Returns Vertices of this material.
   Vertices updateVertices(Sp3dFaceObj fo) {
     late List<Offset> verts;
-    if(fo.vertices2d.length==4) {
+    if (fo.vertices2d.length == 4) {
       verts = [
         Offset(fo.vertices2d[0].x, fo.vertices2d[0].y),
         Offset(fo.vertices2d[1].x, fo.vertices2d[1].y),
@@ -103,8 +103,7 @@ class Sp3dPaintImage {
         Offset(fo.vertices2d[3].x, fo.vertices2d[3].y),
         Offset(fo.vertices2d[0].x, fo.vertices2d[0].y)
       ];
-    }
-    else{
+    } else {
       verts = [
         Offset(fo.vertices2d[0].x, fo.vertices2d[0].y),
         Offset(fo.vertices2d[1].x, fo.vertices2d[1].y),
@@ -125,15 +124,16 @@ class Sp3dPaintImage {
   ///
   /// (ja)画像の切り出し情報を設定します。
   List<Offset> _getTextureCoordinates(Size imageSize) {
-    return this.material.textureCoordinates!= null ? this.material.textureCoordinates! :
-    [
-      Offset(0.0, 0.0),
-      Offset(0.0, imageSize.height),
-      Offset(imageSize.width, imageSize.height),
-      Offset(imageSize.width, imageSize.height),
-      Offset(imageSize.width, 0.0),
-      Offset(0.0, 0.0)
-    ];
+    return this.material.textureCoordinates != null
+        ? this.material.textureCoordinates!
+        : [
+            Offset(0.0, 0.0),
+            Offset(0.0, imageSize.height),
+            Offset(imageSize.width, imageSize.height),
+            Offset(imageSize.width, imageSize.height),
+            Offset(imageSize.width, 0.0),
+            Offset(0.0, 0.0)
+          ];
   }
 
   /// (en)Generates color information. Black always returns.

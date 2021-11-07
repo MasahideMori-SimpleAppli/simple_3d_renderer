@@ -162,7 +162,8 @@ class _Sp3dCanvasPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // カメラで撮影した２次元座標とカメラまでの距離などを含むデータオブジェクトを取得。
     // なお、描画対象外のオブジェクトはここで除外される。
-    final List<Sp3dFaceObj> allFaces = this.w.camera.getPrams(this.w.world, this.w.worldOrigin);
+    final List<Sp3dFaceObj> allFaces =
+        this.w.camera.getPrams(this.w.world, this.w.worldOrigin);
     // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
     allFaces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
     // 描画
@@ -177,10 +178,11 @@ class _Sp3dCanvasPainter extends CustomPainter {
         isFill = material.isFill;
         strokeWidth = material.strokeWidth;
       }
-      final List<Color> colors = this.w.light.apply(fo.nsn, fo.camTheta, material);
+      final List<Color> colors =
+          this.w.light.apply(fo.nsn, fo.camTheta, material);
       if (isFill) {
         if (material != null && material.imageIndex != null) {
-          if(w.world.paintImages.containsKey(material)) {
+          if (w.world.paintImages.containsKey(material)) {
             if (w.world.paintImages[material] != null) {
               canvas.drawVertices(
                   w.world.paintImages[material]!.updateVertices(fo),
@@ -207,7 +209,7 @@ class _Sp3dCanvasPainter extends CustomPainter {
         }
       }
       // 外枠の描画
-      if(strokeWidth > 0) {
+      if (strokeWidth > 0) {
         p.color = colors[1];
         p.strokeWidth = strokeWidth;
         p.strokeCap = StrokeCap.butt;

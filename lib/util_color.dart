@@ -10,8 +10,6 @@ import 'dart:ui';
 /// First edition creation date 2021-05-14 14:25:59
 ///
 class UtilColor {
-
-
   /// (en)Converts the double value specified by 0 to 1 to RGBA.
   ///
   /// (ja)0～1で指定したdouble値をRGBAに変換します。
@@ -22,8 +20,9 @@ class UtilColor {
   /// * [o] : opacity.
   ///
   /// Returns Color obj.
-  static Color toRGBAd(double r, double g, double b, {double o=1}) {
-    return Color.fromRGBO((r * 255).toInt(), (g * 255).toInt(), (b * 255).toInt(), o);
+  static Color toRGBAd(double r, double g, double b, {double o = 1}) {
+    return Color.fromRGBO(
+        (r * 255).toInt(), (g * 255).toInt(), (b * 255).toInt(), o);
   }
 
   /// (en)Converts the int value specified from 0 to 255 to RGBA.
@@ -36,8 +35,8 @@ class UtilColor {
   /// * [o] : opacity.
   ///
   /// Returns Color obj.
-  static Color toRGBAi(int r, int g, int b, {int o=255}) {
-    return Color.fromARGB(o,r,g,b);
+  static Color toRGBAi(int r, int g, int b, {int o = 255}) {
+    return Color.fromARGB(o, r, g, b);
   }
 
   /// (en)Returns a random color.
@@ -50,9 +49,9 @@ class UtilColor {
   /// これにより、はっきりとした異なる色を生成します.
   ///
   /// Returns Color obj.
-  static Color random({bool isConvenient=true}) {
+  static Color random({bool isConvenient = true}) {
     Random rand = Random();
-    List<List<List<double>>> cList =[
+    List<List<List<double>>> cList = [
       [
         [1, rand.nextDouble(), rand.nextDouble()],
         [rand.nextDouble(), 1, rand.nextDouble()],
@@ -66,10 +65,13 @@ class UtilColor {
     ];
     int select = rand.nextInt(2);
     int index = rand.nextInt(3);
-    if(isConvenient){
-      return toRGBAd(cList[select][index][0],cList[select][index][1],cList[select][index][2],);
-    }
-    else {
+    if (isConvenient) {
+      return toRGBAd(
+        cList[select][index][0],
+        cList[select][index][1],
+        cList[select][index][2],
+      );
+    } else {
       return toRGBAd(rand.nextDouble(), rand.nextDouble(), rand.nextDouble());
     }
   }
@@ -86,7 +88,6 @@ class UtilColor {
     int r = c.red - level >= 0 ? c.red - level : 0;
     int g = c.green - level >= 0 ? c.green - level : 0;
     int b = c.blue - level >= 0 ? c.blue - level : 0;
-    return Color.fromARGB(c.alpha,r,g,b);
+    return Color.fromARGB(c.alpha, r, g, b);
   }
-
 }

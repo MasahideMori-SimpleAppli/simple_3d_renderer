@@ -106,8 +106,8 @@ class Sp3dWorld {
   /// * [id] : target obj id.
   /// Return : If target does not exist, return null.
   Sp3dObj? get(String id) {
-    for(Sp3dObj i in this.objs){
-      if(i.id == id){
+    for (Sp3dObj i in this.objs) {
+      if (i.id == id) {
         return i;
       }
     }
@@ -129,11 +129,10 @@ class Sp3dWorld {
   ///
   /// * [id] : target obj.
   void removeAt(String id) {
-    for(Sp3dObj i in [...this.objs]){
-      if(i.id == id){
+    for (Sp3dObj i in [...this.objs]) {
+      if (i.id == id) {
         this.objs.remove(i);
       }
     }
   }
-
 }

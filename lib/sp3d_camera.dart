@@ -12,7 +12,6 @@ import 'package:simple_3d_renderer/sp3d_world.dart';
 /// First edition creation date 2021-09-30 12:05:24
 ///
 class Sp3dCamera {
-
   final String className = 'Sp3dCamera';
   final String version = '3';
   Sp3dV3D position;
@@ -27,20 +26,17 @@ class Sp3dCamera {
   /// * [focusLength] : Focus length.
   /// * [rotateAxis] : The axis of rotation of this camera. Normalization is required. Default value is (1,0,0).
   /// * [radian] : The rotation angle of this camera. The unit is radians. radian = degree * pi / 180.
-  Sp3dCamera(this.position, this.focusLength, {rotateAxis, this.radian=0}) {
+  Sp3dCamera(this.position, this.focusLength, {rotateAxis, this.radian = 0}) {
     this.rotateAxis = rotateAxis ?? Sp3dV3D(1.0, 0.0, 0.0);
     this.rotate(this.rotateAxis, this.radian);
   }
 
-  Sp3dCamera deepCopy(){
-    return Sp3dCamera(
-        this.position.deepCopy(),
-        this.focusLength,
-        rotateAxis: this.rotateAxis.deepCopy(),
-        radian: this.radian);
+  Sp3dCamera deepCopy() {
+    return Sp3dCamera(this.position.deepCopy(), this.focusLength,
+        rotateAxis: this.rotateAxis.deepCopy(), radian: this.radian);
   }
 
-  Map<String, dynamic> toDict(){
+  Map<String, dynamic> toDict() {
     Map<String, dynamic> d = {};
     d['class_name'] = this.className;
     d['version'] = this.version;
@@ -51,10 +47,8 @@ class Sp3dCamera {
     return d;
   }
 
-  static Sp3dCamera fromDict(Map<String, dynamic> src){
-    return Sp3dCamera(
-        Sp3dV3D.fromDict(src['position']),
-        src['focus_length'],
+  static Sp3dCamera fromDict(Map<String, dynamic> src) {
+    return Sp3dCamera(Sp3dV3D.fromDict(src['position']), src['focus_length'],
         rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),
         radian: src['radian']);
   }
@@ -98,15 +92,18 @@ class Sp3dCamera {
   /// Returns Clip coordinates.
   List<Sp3dV2D> convert(Sp3dObj obj, Sp3dV2D origin) {
     List<Sp3dV2D> r = [];
-    for(Sp3dV3D i in obj.vertices){
+    for (Sp3dV3D i in obj.vertices) {
       // 実質的にはワールド側全体が回転している。このため、get_pramsの内部計算ではrotated_positionが併用される。
       final Sp3dV3D v = i.rotated(this.rotateAxis, this.radian);
-      r.add(
-          Sp3dV2D(
-              origin.x + this.focusLength * (v.x - this.position.x) / (this.position.z - v.z),
-              origin.y + this.focusLength * (this.position.y - v.y) / (this.position.z - v.z)
-          )
-      );
+      r.add(Sp3dV2D(
+          origin.x +
+              this.focusLength *
+                  (v.x - this.position.x) /
+                  (this.position.z - v.z),
+          origin.y +
+              this.focusLength *
+                  (this.position.y - v.y) /
+                  (this.position.z - v.z)));
     }
     return r;
   }
@@ -123,7 +120,7 @@ class Sp3dCamera {
   /// Returns calculated data.
   List<Sp3dFaceObj> getPrams(Sp3dWorld world, Sp3dV2D origin) {
     List<Sp3dFaceObj> r = [];
-    for(Sp3dObj obj in world.objs) {
+    for (Sp3dObj obj in world.objs) {
       final List<Sp3dV2D> conv2d = this.convert(obj, origin);
       for (Sp3dFragment i in obj.fragments) {
         for (Sp3dFace j in i.faces) {
@@ -135,14 +132,7 @@ class Sp3dCamera {
           final double cam_theta = Sp3dV3D.dot(n, d);
           // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
           if (cam_theta >= 0) {
-            r.add(Sp3dFaceObj(
-                obj,
-                i,
-                j,
-                v,
-                _get2dV(j, conv2d),
-                n,
-                cam_theta,
+            r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, cam_theta,
                 Sp3dV3D.dist(c, this.rotatedPosition)));
           }
         }
@@ -151,12 +141,11 @@ class Sp3dCamera {
     return r;
   }
 
-  List<Sp3dV2D> _get2dV(Sp3dFace face, List<Sp3dV2D> conv2d){
+  List<Sp3dV2D> _get2dV(Sp3dFace face, List<Sp3dV2D> conv2d) {
     List<Sp3dV2D> r = [];
-    for(int i in face.vertexIndexList){
+    for (int i in face.vertexIndexList) {
       r.add(conv2d[i]);
     }
     return r;
   }
-
 }
