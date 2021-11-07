@@ -150,9 +150,9 @@ class Sp3dPaintImage {
     ];
   }
 
-  /// (en)Returns the color and index information of 3D vertices.
+  /// (en)Returns the color and index information of vertices.
   ///
-  /// (ja)色、及び3次元頂点のインデックス情報を返します。
+  /// (ja)色、及び頂点のインデックス情報を返します。
   static List<int> _getIndices() {
     return [0, 1, 2, 3, 4, 5];
   }

@@ -1,3 +1,8 @@
+## 2.0.1
+
+* Fix README Usage.
+* Made minor corrections to the documentation.
+
 ## 2.0.0
 
 * Changed class name and class member name to lower camel case.

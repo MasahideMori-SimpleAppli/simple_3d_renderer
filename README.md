@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     // Create Sp3dObj.
     Sp3dObj obj = UtilSp3dGeometry.cube(200,200,200,4,4,4);
-    obj.materials.add(FSp3dMaterial.green.deep_copy());
+    obj.materials.add(FSp3dMaterial.green.deepCopy());
     obj.fragments[0].faces[0].materialIndex=1;
     obj.materials[0] = FSp3dMaterial.grey.deepCopy()..strokeColor=Color.fromARGB(255, 0, 0, 255);
     obj.rotate(Sp3dV3D(1,1,0).nor(), 30*3.14/180);
