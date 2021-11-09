@@ -13,7 +13,7 @@ import 'package:simple_3d_renderer/sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   final String className = 'Sp3dWorld';
-  final String version = '2';
+  final String version = '4';
   List<Sp3dObj> objs;
 
   // コンバートされた各オブジェクトごとの画像情報
@@ -34,9 +34,9 @@ class Sp3dWorld {
     Map<String, dynamic> d = {};
     d['class_name'] = this.className;
     d['version'] = this.version;
-    List<Sp3dObj> mobjs = [];
+    List<Map<String, dynamic>> mobjs = [];
     for (Sp3dObj i in this.objs) {
-      mobjs.add(i.deepCopy());
+      mobjs.add(i.toDict());
     }
     d['objs'] = mobjs;
     return d;

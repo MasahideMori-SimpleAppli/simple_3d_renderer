@@ -1,3 +1,7 @@
+## 2.0.2
+
+* Bug fix of Sp3dWorld fromDict function.
+
 ## 2.0.1
 
 * Fix README Usage.

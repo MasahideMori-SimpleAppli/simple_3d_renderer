@@ -129,10 +129,10 @@ class Sp3dCamera {
           final Sp3dV3D c = Sp3dV3D.ave(v);
           // ここでは回転後の値を使う。
           final Sp3dV3D d = (c - this.rotatedPosition).nor();
-          final double cam_theta = Sp3dV3D.dot(n, d);
+          final double camTheta = Sp3dV3D.dot(n, d);
           // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
-          if (cam_theta >= 0) {
-            r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, cam_theta,
+          if (camTheta >= 0) {
+            r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, camTheta,
                 Sp3dV3D.dist(c, this.rotatedPosition)));
           }
         }
