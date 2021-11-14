@@ -166,6 +166,8 @@ For example, rewrite sample code as follows.
 The return value in onPanDownListener is a class that contains information about the touched surface.  
 The sample uses this information to move the object touched by the user.  
 ```dart
+  // Add import.
+  import 'package:simple_3d_renderer/sp3d_faceobj.dart';
   // Add variable to _MyAppState.
   ValueNotifier<int> vn = ValueNotifier<int>(0);
   --------------------------------------------------------------------

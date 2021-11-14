@@ -163,6 +163,8 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 onPanDownListenerの戻り値は、タッチされたサーフェスに関する情報を含むクラスです。  
 このサンプルでは、この情報を使用して、ユーザーがタッチしたオブジェクトを移動しています。  
 ```dart
+  // インポートを追加します.
+  import 'package:simple_3d_renderer/sp3d_faceobj.dart';
   // _MyAppStateの変数を追加してください.
   ValueNotifier<int> vn = ValueNotifier<int>(0);
   --------------------------------------------------------------------
