@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:simple_3d/simple_3d.dart';
+import 'package:simple_3d_renderer/sp3d_faceobj.dart';
 import 'package:simple_3d_renderer/sp3d_paint_image.dart';
 
 /// (en)It is a world class for handling multiple Sp3dObj at once.
@@ -13,14 +14,19 @@ import 'package:simple_3d_renderer/sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   final String className = 'Sp3dWorld';
-  final String version = '4';
+  final String version = '5';
   List<Sp3dObj> objs;
 
+  // 以下はディープコピーなどが不要な一時変数。
   // コンバートされた各オブジェクトごとの画像情報
   Map<Sp3dObj, Map<int, Image>> convertedImages = {};
 
   // レンダリング情報を構成するためのイメージのMap。構成に失敗したイメージはnullが入る。
   Map<Sp3dMaterial, Sp3dPaintImage?> paintImages = {};
+
+  // 以下は一次データであるため保存されない。
+  // タッチ制御のために保存されるレンダリング座標情報。汎用性のために外部からも参照可能にする。
+  List<Sp3dFaceObj> sortedAllFaces = [];
 
   /// Constructor
   /// * [objs] : World obj.

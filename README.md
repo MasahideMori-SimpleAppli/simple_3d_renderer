@@ -123,7 +123,8 @@ For example, rewrite sample code as follows.(*Note that some unnecessary paramet
     this.objs[0].fragments[0].faces[2].materialIndex=1;
     this.objs[0].fragments[0].faces[3].materialIndex=1;
     this.objs[0].materials[1].imageIndex = 0;
-    // You can also use the image by adding the image directly under the project like this and listing the asset in pubspec.yaml.
+    // You can use images by creating an assets/images folder under your project, adding images, and adding the asset path to pubspec.yaml.
+    // For Flutter Web, you also need to copy it to your web folder.
     this.objs[0].images.add(await _readFileBytes("./assets/images/sample_image.png"));
     this.world = Sp3dWorld(objs);
     this.world.initImages().then(
@@ -159,6 +160,51 @@ obj.materials[0].strokeColor = Color.fromARGB(255, 0, 255, 0);
 obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)];
 ```
 ![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample3_custom_crop.png)
+
+## How to follow a user's touch event
+For example, rewrite sample code as follows.  
+The return value in onPanDownListener is a class that contains information about the touched surface.  
+The sample uses this information to move the object tapped by the user.  
+```dart
+  // Add variable to _MyAppState.
+  ValueNotifier<int> vn = ValueNotifier<int>(0);
+  --------------------------------------------------------------------
+  // Rewrite Sp3dRenderer.
+  Sp3dRenderer(
+    k,
+    Size(800, 800),
+    Sp3dV2D(400, 400),
+    this.world,
+    // If you want to reduce distortion, shoot from a distance at high magnification.
+    Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
+    Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
+    allowFullCtrl: true,
+    allowUserWorldRotation: true,
+    checkTouchObj: true,
+    vn: this.vn,
+    onPanDownListener: (Offset offset, Sp3dFaceObj? info){
+      print("onPanDown");
+      if(info!=null) {
+        info.obj.move(Sp3dV3D(50, 0, 0));
+        this.vn.value++;
+      }
+    },
+    onPanCancelListener: (){
+      print("onPanCancel");
+    },
+    onPanStartListener: (Offset offset){
+      print("onPanStart");
+      print(offset);
+    },
+    onPanUpdateListener: (Offset offset){
+      print("onPanUpdate");
+      print(offset);
+    },
+    onPanEndListener: (){
+      print("onPanEnd");
+    },
+  )
+```
 
 ## Support
 If you need paid support, please contact my company.  

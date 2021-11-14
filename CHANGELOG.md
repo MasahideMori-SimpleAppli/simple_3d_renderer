@@ -1,3 +1,11 @@
+## 3.0.0
+
+* Starting with this version, you can get the user's touch action on the rendered object.
+* Removed deepCopy, toDict and fromDict function in Sp3dRenderer.
+* Added allowFullCtrl, allowUserWorldRotation and checkTouchObj flags to Sp3dRenderer.
+* Added onPanDownListener, onPanCancelListener, onPanStartListener, onPanUpdateListener and onPanEndListener to Sp3dRenderer.
+* Added ValueNotifier to Sp3dRenderer.
+
 ## 2.0.2
 
 * Bug fix of Sp3dWorld fromDict function.

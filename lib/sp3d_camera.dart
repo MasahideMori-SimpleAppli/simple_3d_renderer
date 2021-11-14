@@ -13,7 +13,7 @@ import 'package:simple_3d_renderer/sp3d_world.dart';
 ///
 class Sp3dCamera {
   final String className = 'Sp3dCamera';
-  final String version = '3';
+  final String version = '4';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;
@@ -26,7 +26,8 @@ class Sp3dCamera {
   /// * [focusLength] : Focus length.
   /// * [rotateAxis] : The axis of rotation of this camera. Normalization is required. Default value is (1,0,0).
   /// * [radian] : The rotation angle of this camera. The unit is radians. radian = degree * pi / 180.
-  Sp3dCamera(this.position, this.focusLength, {rotateAxis, this.radian = 0}) {
+  Sp3dCamera(this.position, this.focusLength,
+      {Sp3dV3D? rotateAxis, this.radian = 0}) {
     this.rotateAxis = rotateAxis ?? Sp3dV3D(1.0, 0.0, 0.0);
     this.rotate(this.rotateAxis, this.radian);
   }

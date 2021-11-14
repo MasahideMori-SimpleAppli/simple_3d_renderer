@@ -112,17 +112,18 @@ class _MyAppState extends State<MyApp> {
 ![sample_image.png](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/sample_image.png)
 
 ```dart
-  // Chenge Cube of initState().
+  // Cube の initState()内、オブジェクト生成部分を変更してください。
   Sp3dObj obj = UtilSp3dGeometry.cube(200,200,200,1,1,1);
   --------------------------------------------------------------------
-  // Chenge function
+  // 関数を書き換えます。
   void loadImage() async {
     this.objs[0].fragments[0].faces[0].materialIndex=1;
     this.objs[0].fragments[0].faces[1].materialIndex=1;
     this.objs[0].fragments[0].faces[2].materialIndex=1;
     this.objs[0].fragments[0].faces[3].materialIndex=1;
     this.objs[0].materials[1].imageIndex = 0;
-    // You can also use the image by adding the image directly under the project like this and listing the asset in pubspec.yaml.
+    // プロジェクトの直下にassets/imagesフォルダを作って画像を追加し、pubspec.yamlにアセットのパスを追加することで、画像を使用できます。
+    // Flutter Webの場合は、さらにそれをwebフォルダへコピーする必要があります。
     this.objs[0].images.add(await _readFileBytes("./assets/images/sample_image.png"));
     this.world = Sp3dWorld(objs);
     this.world.initImages().then(
@@ -134,7 +135,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  // Add function
+  // 関数を追加します。
   Future<Uint8List> _readFileBytes(String filePath) async {
     ByteData bd = await rootBundle.load(filePath);
     return bd.buffer.asUint8List(bd.offsetInBytes,bd.lengthInBytes);
@@ -157,6 +158,50 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 ```
 ![Texture Sample](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/texture_sample3_custom_crop.png)
 
+## タッチイベントの取得方法と、動的なオブジェクトの変更方法。
+例えば、サンプルコードを以下のように書き換えます。  
+onPanDownListenerの戻り値は、タッチされたサーフェスに関する情報を含むクラスです。  
+このサンプルでは、この情報を使用して、ユーザーがタップしたオブジェクトを移動しています。  
+```dart
+  // _MyAppStateの変数を追加してください.
+  ValueNotifier<int> vn = ValueNotifier<int>(0);
+  --------------------------------------------------------------------
+  // Sp3dRendererを書き換えます.
+  Sp3dRenderer(
+    k,
+    Size(800, 800),
+    Sp3dV2D(400, 400),
+    this.world,
+    // If you want to reduce distortion, shoot from a distance at high magnification.
+    Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
+    Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
+    allowFullCtrl: true,
+    allowUserWorldRotation: true,
+    checkTouchObj: true,
+    vn: this.vn,
+    onPanDownListener: (Offset offset, Sp3dFaceObj? info){
+      print("onPanDown");
+      if(info!=null) {
+        info.obj.move(Sp3dV3D(50, 0, 0));
+        this.vn.value++;
+      }
+    },
+    onPanCancelListener: (){
+      print("onPanCancel");
+    },
+    onPanStartListener: (Offset offset){
+      print("onPanStart");
+      print(offset);
+    },
+    onPanUpdateListener: (Offset offset){
+      print("onPanUpdate");
+      print(offset);
+    },
+    onPanEndListener: (){
+      print("onPanEnd");
+    },
+  )
+```
 
 ## サポート
 もし何らかの理由で有償のサポートが必要な場合は私の会社に問い合わせてください。  
