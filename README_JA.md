@@ -161,7 +161,7 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 ## タッチイベントの取得方法と、動的なオブジェクトの変更方法。
 例えば、サンプルコードを以下のように書き換えます。  
 onPanDownListenerの戻り値は、タッチされたサーフェスに関する情報を含むクラスです。  
-このサンプルでは、この情報を使用して、ユーザーがタップしたオブジェクトを移動しています。  
+このサンプルでは、この情報を使用して、ユーザーがタッチしたオブジェクトを移動しています。  
 ```dart
   // _MyAppStateの変数を追加してください.
   ValueNotifier<int> vn = ValueNotifier<int>(0);
