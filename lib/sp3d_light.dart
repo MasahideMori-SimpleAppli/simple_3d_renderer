@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:simple_3d/simple_3d.dart';
-import 'package:simple_3d_renderer/util_color.dart';
 
 ///
 /// (en)A simple light for shooting Sp3dObj.
@@ -76,7 +75,7 @@ class Sp3dLight {
   /// * [material] : The material to which light is applied.
   ///
   /// Returns : [Color(bg),Color(stroke)].
-  List<Color> apply(Sp3dV3D nsn, double camTheta, Sp3dMaterial? material) {
+  List<Color> apply(Sp3dV3D nsn, double camTheta, Sp3dMaterial material) {
     List<Color> r = [];
     // 光の計算
     // 正規化されたベクトル同士の内積を取ると結果がcosΘになるので、そこから光の拡散度合い（光の強さ）に変換する。
@@ -91,22 +90,15 @@ class Sp3dLight {
       brightness = this.minBrightness;
     }
     // ライトを適用
-    if (material == null) {
-      for (int i = 0; i < 2; i++) {
-        Color c = UtilColor.random(isConvenient: true);
-        r.add(c);
-      }
+    Color bg = material.bg;
+    r.add(Color.fromARGB(bg.alpha, (brightness * bg.red).toInt(),
+        (brightness * bg.green).toInt(), (brightness * bg.blue).toInt()));
+    Color sc = material.strokeColor;
+    if (this.applyStroke) {
+      r.add(Color.fromARGB(sc.alpha, (brightness * sc.red).toInt(),
+          (brightness * sc.green).toInt(), (brightness * sc.blue).toInt()));
     } else {
-      Color bg = material.bg;
-      r.add(Color.fromARGB(bg.alpha, (brightness * bg.red).toInt(),
-          (brightness * bg.green).toInt(), (brightness * bg.blue).toInt()));
-      Color sc = material.strokeColor;
-      if (this.applyStroke) {
-        r.add(Color.fromARGB(sc.alpha, (brightness * sc.red).toInt(),
-            (brightness * sc.green).toInt(), (brightness * sc.blue).toInt()));
-      } else {
-        r.add(sc);
-      }
+      r.add(sc);
     }
     return r;
   }

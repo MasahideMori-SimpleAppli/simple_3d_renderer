@@ -1,3 +1,8 @@
+## 3.0.1
+
+* Updates associated with base library updates.
+* Fixed so that if the material corresponding to Face is null, the Face will not be drawn.
+
 ## 3.0.0
 
 * Starting with this version, you can get the user's touch action on the rendered object.

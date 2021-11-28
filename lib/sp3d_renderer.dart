@@ -227,31 +227,47 @@ class _Sp3dCanvasPainter extends CustomPainter {
     // 描画
     for (Sp3dFaceObj fo in allFaces) {
       // パスを描画
-      // 塗りつぶしの設定
-      bool isFill = true;
-      double strokeWidth = 0;
-      Sp3dMaterial? material;
+      // マテリアルが設定されていない時は描画しない。
       if (fo.face.materialIndex != null) {
-        material = fo.obj.materials[fo.face.materialIndex!];
-        isFill = material.isFill;
-        strokeWidth = material.strokeWidth;
-      }
-      final List<Color> colors =
-          this.w.light.apply(fo.nsn, fo.camTheta, material);
-      if (isFill) {
-        if (material != null && material.imageIndex != null) {
-          if (w.world.paintImages.containsKey(material)) {
-            if (w.world.paintImages[material] != null) {
-              canvas.drawVertices(
-                  w.world.paintImages[material]!.updateVertices(fo),
-                  BlendMode.srcOver,
-                  w.world.paintImages[material]!.getPaint());
+        Sp3dMaterial material = fo.obj.materials[fo.face.materialIndex!];
+        bool isFill = material.isFill;
+        double strokeWidth = material.strokeWidth;
+        final List<Color> colors =
+            this.w.light.apply(fo.nsn, fo.camTheta, material);
+        if (isFill) {
+          if (material.imageIndex != null) {
+            if (w.world.paintImages.containsKey(material)) {
+              if (w.world.paintImages[material] != null) {
+                canvas.drawVertices(
+                    w.world.paintImages[material]!.updateVertices(fo),
+                    BlendMode.srcOver,
+                    w.world.paintImages[material]!.getPaint());
+              }
             }
+          } else {
+            // 塗りつぶし
+            p.color = colors[0];
+            p.style = PaintingStyle.fill;
+            bool isStartPoint = true;
+            for (Sp3dV2D v in fo.vertices2d) {
+              if (isStartPoint) {
+                path.moveTo(v.x, v.y);
+                isStartPoint = false;
+              } else {
+                path.lineTo(v.x, v.y);
+              }
+            }
+            path.close();
+            canvas.drawPath(path, p);
+            path.reset();
           }
-        } else {
-          // 塗りつぶし
-          p.color = colors[0];
-          p.style = PaintingStyle.fill;
+        }
+        // 外枠の描画
+        if (strokeWidth > 0) {
+          p.color = colors[1];
+          p.strokeWidth = strokeWidth;
+          p.strokeCap = StrokeCap.butt;
+          p.style = PaintingStyle.stroke;
           bool isStartPoint = true;
           for (Sp3dV2D v in fo.vertices2d) {
             if (isStartPoint) {
@@ -265,25 +281,6 @@ class _Sp3dCanvasPainter extends CustomPainter {
           canvas.drawPath(path, p);
           path.reset();
         }
-      }
-      // 外枠の描画
-      if (strokeWidth > 0) {
-        p.color = colors[1];
-        p.strokeWidth = strokeWidth;
-        p.strokeCap = StrokeCap.butt;
-        p.style = PaintingStyle.stroke;
-        bool isStartPoint = true;
-        for (Sp3dV2D v in fo.vertices2d) {
-          if (isStartPoint) {
-            path.moveTo(v.x, v.y);
-            isStartPoint = false;
-          } else {
-            path.lineTo(v.x, v.y);
-          }
-        }
-        path.close();
-        canvas.drawPath(path, p);
-        path.reset();
       }
     }
   }
