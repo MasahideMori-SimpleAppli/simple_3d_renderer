@@ -13,11 +13,12 @@ import 'package:simple_3d_renderer/sp3d_world.dart';
 ///
 class Sp3dCamera {
   final String className = 'Sp3dCamera';
-  final String version = '4';
+  final String version = '5';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;
   double radian;
+  bool isAllDrawn;
   // 内部計算でだけ使用する値。移動と回転を分離し、バッファするのに必要。
   late Sp3dV3D rotatedPosition;
 
@@ -26,8 +27,9 @@ class Sp3dCamera {
   /// * [focusLength] : Focus length.
   /// * [rotateAxis] : The axis of rotation of this camera. Normalization is required. Default value is (1,0,0).
   /// * [radian] : The rotation angle of this camera. The unit is radians. radian = degree * pi / 180.
+  /// * [isAllDrawn] : If True, Draw all objects. If False, the blind spot from the camera will not be drawn.
   Sp3dCamera(this.position, this.focusLength,
-      {Sp3dV3D? rotateAxis, this.radian = 0}) {
+      {Sp3dV3D? rotateAxis, this.radian = 0, this.isAllDrawn = false}) {
     this.rotateAxis = rotateAxis ?? Sp3dV3D(1.0, 0.0, 0.0);
     this.rotate(this.rotateAxis, this.radian);
   }
@@ -45,13 +47,16 @@ class Sp3dCamera {
     d['focus_length'] = this.focusLength;
     d['rotate_axis'] = this.rotateAxis.toDict();
     d['radian'] = this.radian;
+    d['is_all_drawn'] = this.isAllDrawn;
     return d;
   }
 
   static Sp3dCamera fromDict(Map<String, dynamic> src) {
     return Sp3dCamera(Sp3dV3D.fromDict(src['position']), src['focus_length'],
         rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),
-        radian: src['radian']);
+        radian: src['radian'],
+        isAllDrawn:
+            src.containsKey('is_all_drawn') ? src['is_all_drawn'] : false);
   }
 
   /// (en)Move the position of this camera.
@@ -131,10 +136,15 @@ class Sp3dCamera {
           // ここでは回転後の値を使う。
           final Sp3dV3D d = (c - this.rotatedPosition).nor();
           final double camTheta = Sp3dV3D.dot(n, d);
-          // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
-          if (camTheta >= 0) {
+          if (this.isAllDrawn) {
             r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, camTheta,
                 Sp3dV3D.dist(c, this.rotatedPosition)));
+          } else {
+            // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
+            if (camTheta >= 0) {
+              r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, camTheta,
+                  Sp3dV3D.dist(c, this.rotatedPosition)));
+            }
           }
         }
       }

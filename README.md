@@ -207,6 +207,9 @@ The sample uses this information to move the object touched by the user.
     },
   )
 ```
+## Save or Restore the Sp3dWorld
+If you want to save / restore multiple Sp3dObj along with their location, Sp3dWorld also has toDict and fromDict methods.  
+The extension when saving is recommended to be .s3dw to avoid confusion.  
 
 ## Support
 If you need paid support, please contact my company.  

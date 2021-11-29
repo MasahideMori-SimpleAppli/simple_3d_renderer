@@ -1,3 +1,6 @@
+## 4.0.0
+* Added isAllDrawn flag to Sp3dCamera.
+
 ## 3.0.1
 
 * Updates associated with base library updates.
