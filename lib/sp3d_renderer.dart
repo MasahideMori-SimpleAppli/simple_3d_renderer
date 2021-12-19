@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
 import 'package:simple_3d_renderer/sp3d_faceobj.dart';
@@ -21,7 +20,7 @@ import 'package:simple_3d_renderer/sp3d_v2d.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   final String className = 'Sp3dRenderer';
-  final String version = '5';
+  final String version = '6';
   final GlobalKey key;
   final Size size;
   final Sp3dV2D worldOrigin;
@@ -33,6 +32,7 @@ class Sp3dRenderer extends StatefulWidget {
   final bool allowUserWorldRotation;
   final bool checkTouchObj;
   final ValueNotifier<int>? vn;
+  final double rotationSpeed;
 
   // タッチリスナの定義。速度の問題があるので、onPanDownでのみ当たり判定の演算を行い、当たり判定があれば情報クラスを返す。
   final Function(Offset, Sp3dFaceObj?)? onPanDownListener;
@@ -62,6 +62,7 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [onPanUpdateListener] : Callback at user pan update.
   /// * [onPanEndListener] : Callback at user pan end.
   /// * [vn] : ValueNotifier. If update this notifier.value, custom painter in renderer will repaint.
+  /// * [rotationSpeed] : The rotation speed of the camera relative to the amount of swipe by the user.
   Sp3dRenderer(this.key, this.size, this.worldOrigin, this.world, this.camera,
       this.light,
       {this.useUserGesture = true,
@@ -73,7 +74,8 @@ class Sp3dRenderer extends StatefulWidget {
       this.onPanStartListener,
       this.onPanUpdateListener,
       this.onPanEndListener,
-      this.vn})
+      this.vn,
+      this.rotationSpeed = 1.0})
       : super(key: key);
 
   @override
@@ -84,17 +86,25 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
   // ドラッグ開始位置
   Sp3dV3D _sp = Sp3dV3D(0, 0, 0);
 
-  // 前回のユーザードラッグ位置
-  Sp3dV3D _preP = Sp3dV3D(0, 0, 0);
+  // 現在の軸
+  Sp3dV3D _axis = Sp3dV3D(0, 0, 0);
 
-  // 現在の回転角
-  double _angle = 0.0;
+  // 現在の差
+  Sp3dV3D _diff = Sp3dV3D(0, 0, 0);
+
+  // 以前の差
+  Sp3dV3D _lastDiff = Sp3dV3D(0, 0, 0);
 
   // 当たり判定計算用のPath
   final Path _p = Path();
 
   // 以降の回転を抑制するかどうかのフラグ
   bool _canRotation = true;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +151,7 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
             }
           },
           onPanCancel: () {
+            endProcess();
             if (widget.onPanCancelListener != null) {
               widget.onPanCancelListener!();
             }
@@ -148,7 +159,6 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
           onPanStart: (DragStartDetails d) {
             if (widget.allowUserWorldRotation && this._canRotation) {
               this._sp = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
-              this._preP = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
             }
             if (widget.onPanStartListener != null) {
               widget.onPanStartListener!(d.localPosition);
@@ -163,6 +173,7 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
             }
           },
           onPanEnd: (DragEndDetails d) {
+            endProcess();
             if (widget.onPanEndListener != null) {
               widget.onPanEndListener!();
             }
@@ -170,17 +181,23 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
         );
       } else {
         return GestureDetector(
-            child: CustomPaint(
-              painter: _Sp3dCanvasPainter(widget),
-              size: widget.size,
-            ),
-            onPanStart: (DragStartDetails d) {
-              this._sp = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
-              this._preP = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
-            },
-            onPanUpdate: (DragUpdateDetails d) {
-              _rotation(d.localPosition);
-            });
+          child: CustomPaint(
+            painter: _Sp3dCanvasPainter(widget),
+            size: widget.size,
+          ),
+          onPanStart: (DragStartDetails d) {
+            this._sp = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
+          },
+          onPanUpdate: (DragUpdateDetails d) {
+            _rotation(d.localPosition);
+          },
+          onPanCancel: () {
+            endProcess();
+          },
+          onPanEnd: (DragEndDetails d) {
+            endProcess();
+          },
+        );
       }
     } else {
       return CustomPaint(
@@ -194,15 +211,30 @@ class _Sp3dRendererState extends State<Sp3dRenderer> {
   void _rotation(Offset offset) {
     setState(() {
       final Sp3dV3D nowP = Sp3dV3D(offset.dx, offset.dy, 0);
-      this._angle += (nowP - this._preP).len();
-      if (this._angle > 360) {
-        this._angle %= 360;
+      // 始点ベースにして戻り方向を有効にする。
+      final Sp3dV3D diff = (nowP - this._sp) * widget.rotationSpeed;
+      // 前の軸から、今の軸へスムーズに移動させる
+      this._diff = this._lastDiff + diff;
+      // 前回の回転分を考慮した角度。
+      double angle = this._diff.len();
+      if (angle > 360 || angle < -360) {
+        // 360度以上の回転に対応
+        this._diff.x = 0.0;
+        this._diff.y = 0.0;
+        this._diff.z = 0.0;
+        this._lastDiff = Sp3dV3D(0, 0, 0);
+        this._sp = nowP;
+        angle = 0;
       }
-      final Sp3dV3D diff = nowP - this._sp;
-      final Sp3dV3D axis = Sp3dV3D(diff.y, diff.x, 0).nor();
-      this.widget.camera.rotate(axis, this._angle * pi / 180);
-      this._preP = nowP;
+      // 回転軸。
+      this._axis = Sp3dV3D(this._diff.y, this._diff.x, 0).nor();
+      this.widget.camera.rotate(this._axis, angle * pi / 180);
     });
+  }
+
+  /// run onPanCancel or onPanEnd.
+  void endProcess() {
+    this._lastDiff = this._diff;
   }
 }
 
