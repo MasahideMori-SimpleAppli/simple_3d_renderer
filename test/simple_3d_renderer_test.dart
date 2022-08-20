@@ -1,13 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_3d/simple_3d.dart';
-import 'package:simple_3d_renderer/sp3d_camera.dart';
-import 'package:simple_3d_renderer/sp3d_light.dart';
-import 'package:simple_3d_renderer/sp3d_renderer.dart';
-import 'package:simple_3d_renderer/sp3d_v2d.dart';
-import 'package:simple_3d_renderer/sp3d_world.dart';
-import 'package:util_simple_3d/util_sp3d_geometry.dart';
+import 'package:simple_3d_renderer/simple_3d_renderer.dart';
+import 'package:util_simple_3d/util_simple_3d.dart';
 
 void main() {
   test('creation test', () {
@@ -15,7 +10,6 @@ void main() {
         Sp3dWorld([UtilSp3dGeometry.cube(200, 200, 200, 4, 4, 4)]);
     world.initImages().then((List<Sp3dObj> errorObjs) {
       Sp3dRenderer(
-          GlobalKey(),
           Size(800, 800),
           Sp3dV2D(400, 400),
           world,

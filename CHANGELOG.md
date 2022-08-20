@@ -1,3 +1,7 @@
+## 5.0.0
+* Refactored the structure for future development.
+* Some speedup.
+
 ## 4.0.1
 * Fixed reported issue 1, Fixed a bug related to camera movement by user swipe.
 * Added rotationSpeed variable to Sp3dRenderer.

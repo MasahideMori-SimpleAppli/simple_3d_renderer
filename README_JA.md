@@ -15,25 +15,21 @@ Sp3dObjは科学のために作られた3Dフォーマット(Simple 3D Format)�
 ```dart
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
-import 'package:util_simple_3d/util_sp3d_geometry.dart';
-import 'package:util_simple_3d/f_sp3d_material.dart';
-import 'package:simple_3d_renderer/sp3d_renderer.dart';
-import 'package:simple_3d_renderer/sp3d_v2d.dart';
-import 'package:simple_3d_renderer/sp3d_world.dart';
-import 'package:simple_3d_renderer/sp3d_camera.dart';
-import 'package:simple_3d_renderer/sp3d_light.dart';
+import 'package:util_simple_3d/util_simple_3d.dart';
+import 'package:simple_3d_renderer/simple_3d_renderer.dart';
 
 void main() async {
-  runApp(new MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final k = GlobalKey();
   late List<Sp3dObj> objs = [];
   late Sp3dWorld world;
   bool isLoaded = false;
@@ -42,59 +38,54 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // Create Sp3dObj.
-    Sp3dObj obj = UtilSp3dGeometry.cube(200,200,200,4,4,4);
+    Sp3dObj obj = UtilSp3dGeometry.cube(200, 200, 200, 4, 4, 4);
     obj.materials.add(FSp3dMaterial.green.deepCopy());
-    obj.fragments[0].faces[0].materialIndex=1;
-    obj.materials[0] = FSp3dMaterial.grey.deepCopy()..strokeColor=Color.fromARGB(255, 0, 0, 255);
-    obj.rotate(Sp3dV3D(1,1,0).nor(), 30*3.14/180);
-    this.objs.add(obj);
+    obj.fragments[0].faces[0].materialIndex = 1;
+    obj.materials[0] = FSp3dMaterial.grey.deepCopy()
+      ..strokeColor = const Color.fromARGB(255, 0, 0, 255);
+    obj.rotate(Sp3dV3D(1, 1, 0).nor(), 30 * 3.14 / 180);
+    objs.add(obj);
     loadImage();
   }
 
   void loadImage() async {
-    this.world = Sp3dWorld(objs);
-    this.world.initImages().then(
-        (List<Sp3dObj> errorObjs){
-          setState(() {
-            this.isLoaded = true;
-          });
-        }
-        );
+    world = Sp3dWorld(objs);
+    world.initImages().then((List<Sp3dObj> errorObjs) {
+      setState(() {
+        isLoaded = true;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!this.isLoaded) {
+    if (!isLoaded) {
       return MaterialApp(
-          title: 'Sp3dRenderer',
-          home: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Color.fromARGB(255, 0, 255, 0),
-              ),
-              backgroundColor: Color.fromARGB(255, 33, 33, 33),
-              body: Container()
-          )
-      );
-    }
-    else {
+              title: 'Sp3dRenderer',
+              home: Scaffold(
+                      appBar: AppBar(
+                        backgroundColor: const Color.fromARGB(255, 0, 255, 0),
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 33, 33, 33),
+                      body: Container()));
+    } else {
       return MaterialApp(
         title: 'Sp3dRenderer',
         home: Scaffold(
           appBar: AppBar(
-            backgroundColor: Color.fromARGB(255, 0, 255, 0),
+            backgroundColor: const Color.fromARGB(255, 0, 255, 0),
           ),
-          backgroundColor: Color.fromARGB(255, 33, 33, 33),
+          backgroundColor: const Color.fromARGB(255, 33, 33, 33),
           body: Column(
             children: [
               Sp3dRenderer(
-                  k,
-                  Size(800, 800),
-                  Sp3dV2D(400, 400),
-                  this.world,
-                  // If you want to reduce distortion, shoot from a distance at high magnification.
-                  Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
-                  Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true)
-              )
+                const Size(800, 800),
+                Sp3dV2D(400, 400),
+                world,
+                // If you want to reduce distortion, shoot from a distance at high magnification.
+                Sp3dCamera(Sp3dV3D(0, 0, 3000), 6000),
+                Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
+              ),
             ],
           ),
         ),
@@ -163,14 +154,11 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 onPanDownListenerの戻り値は、タッチされたサーフェスに関する情報を含むクラスです。  
 このサンプルでは、この情報を使用して、ユーザーがタッチしたオブジェクトを移動しています。  
 ```dart
-  // インポートを追加します.
-  import 'package:simple_3d_renderer/sp3d_faceobj.dart';
   // _MyAppStateの変数を追加してください.
   ValueNotifier<int> vn = ValueNotifier<int>(0);
   --------------------------------------------------------------------
   // Sp3dRendererを書き換えます.
   Sp3dRenderer(
-    k,
     Size(800, 800),
     Sp3dV2D(400, 400),
     this.world,
@@ -214,30 +202,27 @@ onPanDownListenerの戻り値は、タッチされたサーフェスに関する
 このパッケージは私が個人で開発していますが、会社経由でサポートできる場合があります。  
 [合同会社シンプルアプリ](https://simpleappli.com/index.html)  
 
-## レンダリングの速度 (10回の描画の平均値)
-ver 0.0.3時点における、CPU 3.40Ghz, 16GB memoryのミッドレンジのマシン上で、debug modeかつWebブラウザ上での描画にかかる時間の考察です。  
+## レンダリングの速度 (20回の描画の平均値)
+CPU 3.40Ghz, 16GB memoryのミッドレンジのマシン上で、debug modeかつWebブラウザ上での描画にかかる時間の考察です。  
 CPUで動作すること、シングルスレッド処理であることなど、速度の上でいくつかの課題があります。  
-リアルタイムレンダリングの場合、体感的には1000 cube (8000 vertices)ぐらいが限界で、2500 cube (20000 vertices)以上だと重いです。  
+リアルタイムレンダリングの場合、体感的には1000 cube (8000 vertices)ぐらいが限界で、それ以上だと重いです。  
 多くの頂点を持つ球などのモデルの場合、快適に操作出来る量はもっと少なくなります。  
 注意：高速化ロジックの影響があるため、どんなオブジェクトでも同様なパフォーマンスになるわけではありません。  
 ```dart
 /// use cube obj(8 vertices / 1 obj)
 Sp3dObj obj = UtilSp3dGeometry.cube(5, 5, 5, 1, 1, 1);
 ```
-- 100 cube 4 ms / paint. (800 vertices, 250.0 fps)
-- 500 cube 19 ms / paint.
-- 1000 cube 38 ms / paint. (8000 vertices, 26.3 fps)
-- 2500 cube 95 ms / paint. (20000 vertices, 10.5 fps)
-- 5000 cube 197 ms / paint.
+### ver（20回の描画の平均値）
+- 100 cube 4.7 ms / paint. (800 vertices, 212.8 fps)
+- 500 cube 23.8 ms / paint.
+- 1000 cube 47.7 ms / paint. (8000 vertices, 21.0 fps)
 ```dart
 /// use sphere obj(72 vertices / 1 obj)
 Sp3dObj obj = UtilSp3dGeometry.sphere(2.5);
 ```
-- 100 sphere 46 ms / paint. (7200 vertices, 21.7 fps)
-- 500 sphere 236 ms / paint.
-- 1000 sphere 473 ms / paint.
-- 2500 sphere 1219 ms / paint.
-- 5000 sphere 2532 ms / paint. (360000 vertices)
+- 100 sphere 60.0 ms / paint. (7200 vertices, 16.6 fps)
+- 500 sphere 307.6 ms / paint.
+- 1000 sphere 619.4 ms / paint. (72000 vertices, 1.6 fps)
 
 ## バージョン管理について
 それぞれ、Cの部分が変更されます。  
