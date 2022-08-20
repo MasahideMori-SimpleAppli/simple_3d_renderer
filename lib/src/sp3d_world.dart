@@ -37,7 +37,7 @@ class Sp3dWorld {
   /// Also, temporary data is not copied.
   Sp3dWorld deepCopy() {
     List<Sp3dObj> mObjs = [];
-    for(Sp3dObj i in objs){
+    for (Sp3dObj i in objs) {
       mObjs.add(i.deepCopy());
     }
     return Sp3dWorld(mObjs);
