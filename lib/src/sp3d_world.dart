@@ -14,7 +14,7 @@ import 'sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   final String className = 'Sp3dWorld';
-  final String version = '5';
+  final String version = '6';
   List<Sp3dObj> objs;
 
   // 以下はディープコピーなどが不要な一時変数。
@@ -32,10 +32,18 @@ class Sp3dWorld {
   /// * [objs] : World obj.
   Sp3dWorld(this.objs);
 
+  /// Deep copy the world.
+  /// Initialization must be performed again.
+  /// Also, temporary data is not copied.
   Sp3dWorld deepCopy() {
-    return Sp3dWorld(objs);
+    List<Sp3dObj> mObjs = [];
+    for(Sp3dObj i in objs){
+      mObjs.add(i.deepCopy());
+    }
+    return Sp3dWorld(mObjs);
   }
 
+  /// Convert to Map.
   Map<String, dynamic> toDict() {
     Map<String, dynamic> d = {};
     d['class_name'] = className;
@@ -48,6 +56,7 @@ class Sp3dWorld {
     return d;
   }
 
+  /// Convert from Map.
   static Sp3dWorld fromDict(Map<String, dynamic> src) {
     List<Sp3dObj> mObjs = [];
     for (Map<String, dynamic> i in src['objs']) {

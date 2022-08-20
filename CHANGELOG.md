@@ -1,6 +1,7 @@
 ## 5.0.0
 * Refactored the structure for future development.
 * Some speedup.
+* Fixed a bug that cannot deep copying of worlds.
 
 ## 4.0.1
 * Fixed reported issue 1, Fixed a bug related to camera movement by user swipe.
