@@ -212,7 +212,6 @@ CPUで動作すること、シングルスレッド処理であることなど�
 /// use cube obj(8 vertices / 1 obj)
 Sp3dObj obj = UtilSp3dGeometry.cube(5, 5, 5, 1, 1, 1);
 ```
-### ver（20回の描画の平均値）
 - 100 cube 4.7 ms / paint. (800 vertices, 212.8 fps)
 - 500 cube 23.8 ms / paint.
 - 1000 cube 47.7 ms / paint. (8000 vertices, 21.0 fps)
