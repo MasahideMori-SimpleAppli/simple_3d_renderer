@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
 
 ///
@@ -10,9 +10,10 @@ import 'package:simple_3d/simple_3d.dart';
 ///
 /// First edition creation date 2021-09-30 21:17:02
 ///
+@immutable
 class Sp3dLight {
   final String className = 'Sp3dLight';
-  final String version = '3';
+  final String version = '4';
   final Sp3dV3D direction;
   final double minBrightness;
   final bool applyStroke;
@@ -23,7 +24,7 @@ class Sp3dLight {
   /// * [minBrightness] : Minimum value of brightness magnification. value is 0.0~1.0.
   /// * [applyStroke] : If true, apply light to wire frame. Default is false.
   /// * [syncCam] : If true, the light is always from the same direction as the camera.
-  Sp3dLight(this.direction,
+  const Sp3dLight(this.direction,
       {this.minBrightness = 0.0,
       this.applyStroke = false,
       this.syncCam = true});

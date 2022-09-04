@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
 import 'sp3d_faceobj.dart';
+import 'sp3d_gesture_detector.dart';
 import 'sp3d_light.dart';
 import 'sp3d_world.dart';
 import 'sp3d_camera.dart';
@@ -20,25 +21,34 @@ import 'sp3d_v2d.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   final String className = 'Sp3dRenderer';
-  final String version = '7';
+  final String version = '8';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
   final Sp3dCamera camera;
   final Sp3dLight light;
   final bool useUserGesture;
-  final bool allowFullCtrl;
   final bool allowUserWorldRotation;
+  final bool allowUserWorldZoom;
   final bool checkTouchObj;
   final ValueNotifier<int>? vn;
   final double rotationSpeed;
+  final double zoomSpeed;
+  final bool isMouseScrollSameVector;
 
   // タッチリスナの定義。速度の問題があるので、onPanDownでのみ当たり判定の演算を行い、当たり判定があれば情報クラスを返す。
-  final Function(Offset, Sp3dFaceObj?)? onPanDownListener;
-  final Function()? onPanCancelListener;
-  final Function(Offset)? onPanStartListener;
-  final Function(Offset)? onPanUpdateListener;
-  final Function()? onPanEndListener;
+  final void Function(Sp3dGestureDetails details, Sp3dFaceObj?)? onPanDown;
+  final void Function(Sp3dGestureDetails details, Sp3dFaceObj?)?
+      onSecondPanDown;
+  final void Function()? onPanCancel;
+  final void Function(Sp3dGestureDetails details)? onPanStart;
+  final void Function(Sp3dGestureDetails details)? onPanUpdate;
+  final void Function(Sp3dGestureDetails details)? onPanEnd;
+  final void Function(Sp3dGestureDetails details)? onPinchStart;
+  final void Function(Sp3dGestureDetails details)? onPinchUpdate;
+  final void Function(Sp3dGestureDetails details)? onPinchEnd;
+  final void Function(Sp3dGestureDetails details)? onMouseScroll;
+  final HitTestBehavior behavior;
 
   /// Constructor
   /// * [key] : Global Key.
@@ -49,33 +59,52 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [world] : Objects to be drawn.
   /// * [camera] : camera.
   /// * [light] : light.
-  /// * [useUserGesture] : If true, apply GestureDetector. If false, also disabled allowFullCtrl flag.
-  /// * [allowFullCtrl] : If true, apply full listener. If false, apply world rotation by user.
-  /// * [allowUserWorldRotation] : If true, allow world rotation by user when allowFullCtrl is true.
-  /// However, when checkTouchObj is true and touch target is exist when onPanDown, the subsequent rotation is suppressed.
+  /// * [useUserGesture] : If true, apply GestureDetector.
+  /// * [allowUserWorldRotation] : If true, allow world rotation by user.
+  /// However, when checkTouchObj is true and touch target is exist when onPanDown or onSecondPanDown,
+  /// the subsequent rotation and zoom is suppressed.
+  /// * [allowUserWorldZoom] : If true, allow world zoom by user. This is operated by pinching in and pinching out.
   /// * [checkTouchObj] : If this is true and allowFullCtrl is true, Returns the information of the object touched when onPanDown.
   /// If false, and if there is no touch target, null is returned by onPanDown.
-  /// * [onPanDownListener] : Callback at user touch initiation. The arguments of the function to be set are the offset and the object touched at the time of touch.
-  /// * [onPanCancelListener] : Callback at user touch cancel. It is called instead of onTouchEnd when user touch cancel.
-  /// * [onPanStartListener] : Callback at user pan start.
-  /// * [onPanUpdateListener] : Callback at user pan update.
-  /// * [onPanEndListener] : Callback at user pan end.
+  /// * [onPanDown] : Callback at user touch initiation.
+  /// The arguments of the function to be set are the offset and the object touched at the time of touch.
+  /// * [onSecondPanDown] : Callback at user touch initiation of second finger.
+  /// * [onPanCancel] : Callback at user touch cancel. It is called instead of onTouchEnd when user touch cancel.
+  /// * [onPanCancel] : Callback at user touch cancel.
+  /// * [onPanStart] : Callback at user pan start.
+  /// * [onPanUpdate] : Callback at user pan update.
+  /// * [onPanEnd] : Callback at user pan end.
+  /// * [onPinchStart] : Callback at user pinch start.
+  /// * [onPinchUpdate] : Callback at user pinch update.
+  /// * [onPinchEnd] : Callback at user pinch end.
+  /// * [onMouseScroll] : Callback at user mouse scroll. This returns a diffV with the orientation stored in y. Any other value is zero.
+  /// * [behavior] : Specification about the hit judgment area of the child widget.
   /// * [vn] : ValueNotifier. If update this notifier.value, custom painter in renderer will repaint.
   /// * [rotationSpeed] : The rotation speed of the camera relative to the amount of swipe by the user.
+  /// * [zoomSpeed] : The zoom speed of the camera relative to the amount of pinch by the user.
+  /// * [isMouseScrollSameVector] : Controls the zoom direction when scrolling with the mouse.
   const Sp3dRenderer(
       this.size, this.worldOrigin, this.world, this.camera, this.light,
-      {this.useUserGesture = true,
-      this.allowFullCtrl = false,
+      {Key? key,
+      this.useUserGesture = true,
       this.allowUserWorldRotation = true,
+      this.allowUserWorldZoom = true,
       this.checkTouchObj = true,
-      this.onPanDownListener,
-      this.onPanCancelListener,
-      this.onPanStartListener,
-      this.onPanUpdateListener,
-      this.onPanEndListener,
+      this.onPanDown,
+      this.onSecondPanDown,
+      this.onPanCancel,
+      this.onPanStart,
+      this.onPanUpdate,
+      this.onPanEnd,
+      this.onPinchStart,
+      this.onPinchUpdate,
+      this.onPinchEnd,
+      this.onMouseScroll,
+      this.behavior = HitTestBehavior.opaque,
       this.vn,
       this.rotationSpeed = 1.0,
-      Key? key})
+      this.zoomSpeed = 3.0,
+      this.isMouseScrollSameVector = true})
       : super(key: key);
 
   @override
@@ -83,122 +112,156 @@ class Sp3dRenderer extends StatefulWidget {
 }
 
 class Sp3dRendererState extends State<Sp3dRenderer> {
+  // 初期値
+  static const Sp3dV2D _zero = Sp3dV2D(0, 0);
+
   // ドラッグ開始位置
-  Sp3dV3D _sp = Sp3dV3D(0, 0, 0);
+  Sp3dV2D _sp = _zero;
 
   // 現在の軸
   Sp3dV3D _axis = Sp3dV3D(0, 0, 0);
 
   // 現在の差
-  Sp3dV3D _diff = Sp3dV3D(0, 0, 0);
+  Sp3dV2D _diff = _zero;
 
   // 以前の差
-  Sp3dV3D _lastDiff = Sp3dV3D(0, 0, 0);
+  Sp3dV2D _lastDiff = _zero;
 
   // 当たり判定計算用のPath
   final Path _p = Path();
 
-  // 以降の回転を抑制するかどうかのフラグ
-  bool _canRotation = true;
+  // 以降の回転や拡大縮小を抑制するかどうかのフラグ
+  bool _canRotationAndZoom = true;
 
   @override
   void initState() {
     super.initState();
   }
 
+  void _panDownAction(Sp3dGestureDetails d, bool isFirstPanDown) {
+    if (widget.checkTouchObj) {
+      for (Sp3dFaceObj i in widget.world.sortedAllFaces.reversed) {
+        _p.reset();
+        if (i.vertices2d.length == 3) {
+          _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);
+          _p.lineTo(i.vertices2d[1].x, i.vertices2d[1].y);
+          _p.lineTo(i.vertices2d[2].x, i.vertices2d[2].y);
+          _p.close();
+          if (_p.contains(d.toOffset())) {
+            if (isFirstPanDown) {
+              widget.onPanDown!(d, i);
+            } else {
+              widget.onSecondPanDown!(d, i);
+            }
+            _canRotationAndZoom = false;
+            return;
+          }
+        } else {
+          _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);
+          _p.lineTo(i.vertices2d[1].x, i.vertices2d[1].y);
+          _p.lineTo(i.vertices2d[2].x, i.vertices2d[2].y);
+          _p.lineTo(i.vertices2d[3].x, i.vertices2d[3].y);
+          _p.close();
+          if (_p.contains(d.toOffset())) {
+            if (isFirstPanDown) {
+              widget.onPanDown!(d, i);
+            } else {
+              widget.onSecondPanDown!(d, i);
+            }
+            _canRotationAndZoom = false;
+            return;
+          }
+        }
+      }
+      if (isFirstPanDown) {
+        widget.onPanDown!(d, null);
+      } else {
+        widget.onSecondPanDown!(d, null);
+      }
+    } else {
+      if (isFirstPanDown) {
+        widget.onPanDown!(d, null);
+      } else {
+        widget.onSecondPanDown!(d, null);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.useUserGesture) {
-      if (widget.allowFullCtrl) {
-        return GestureDetector(
-          child: CustomPaint(
-            painter: _Sp3dCanvasPainter(widget),
-            size: widget.size,
-          ),
-          onPanDown: (DragDownDetails d) {
-            _canRotation = true;
-            if (widget.onPanDownListener != null) {
-              if (widget.checkTouchObj) {
-                for (Sp3dFaceObj i in widget.world.sortedAllFaces.reversed) {
-                  _p.reset();
-                  if (i.vertices2d.length == 3) {
-                    _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);
-                    _p.lineTo(i.vertices2d[1].x, i.vertices2d[1].y);
-                    _p.lineTo(i.vertices2d[2].x, i.vertices2d[2].y);
-                    _p.close();
-                    if (_p.contains(d.localPosition)) {
-                      widget.onPanDownListener!(d.localPosition, i);
-                      _canRotation = false;
-                      return;
-                    }
-                  } else {
-                    _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);
-                    _p.lineTo(i.vertices2d[1].x, i.vertices2d[1].y);
-                    _p.lineTo(i.vertices2d[2].x, i.vertices2d[2].y);
-                    _p.lineTo(i.vertices2d[3].x, i.vertices2d[3].y);
-                    _p.close();
-                    if (_p.contains(d.localPosition)) {
-                      widget.onPanDownListener!(d.localPosition, i);
-                      _canRotation = false;
-                      return;
-                    }
-                  }
-                }
-                widget.onPanDownListener!(d.localPosition, null);
-              } else {
-                widget.onPanDownListener!(d.localPosition, null);
-              }
-            }
-          },
-          onPanCancel: () {
-            endProcess();
-            if (widget.onPanCancelListener != null) {
-              widget.onPanCancelListener!();
-            }
-          },
-          onPanStart: (DragStartDetails d) {
-            if (widget.allowUserWorldRotation && _canRotation) {
-              _sp = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
-            }
-            if (widget.onPanStartListener != null) {
-              widget.onPanStartListener!(d.localPosition);
-            }
-          },
-          onPanUpdate: (DragUpdateDetails d) {
-            if (widget.allowUserWorldRotation && _canRotation) {
-              _rotation(d.localPosition);
-            }
-            if (widget.onPanUpdateListener != null) {
-              widget.onPanUpdateListener!(d.localPosition);
-            }
-          },
-          onPanEnd: (DragEndDetails d) {
-            endProcess();
-            if (widget.onPanEndListener != null) {
-              widget.onPanEndListener!();
-            }
-          },
-        );
-      } else {
-        return GestureDetector(
-          child: CustomPaint(
-            painter: _Sp3dCanvasPainter(widget),
-            size: widget.size,
-          ),
-          onPanStart: (DragStartDetails d) {
-            _sp = Sp3dV3D(d.localPosition.dx, d.localPosition.dy, 0);
-          },
-          onPanUpdate: (DragUpdateDetails d) {
-            _rotation(d.localPosition);
-          },
-          onPanCancel: () {
-            endProcess();
-          },
-          onPanEnd: (DragEndDetails d) {
-            endProcess();
-          },
-        );
-      }
+      return Sp3dGestureDetector(
+        onPanDown: (Sp3dGestureDetails d) {
+          _canRotationAndZoom = true;
+          if (widget.onPanDown != null) {
+            _panDownAction(d, true);
+          }
+        },
+        onSecondPanDown: (Sp3dGestureDetails d) {
+          if (widget.onSecondPanDown != null) {
+            _panDownAction(d, false);
+          }
+        },
+        onPanCancel: () {
+          endProcess();
+          if (widget.onPanCancel != null) {
+            widget.onPanCancel!();
+          }
+        },
+        onPanStart: (Sp3dGestureDetails d) {
+          if (widget.allowUserWorldRotation && _canRotationAndZoom) {
+            _sp = d.nowV;
+          }
+          if (widget.onPanStart != null) {
+            widget.onPanStart!(d);
+          }
+        },
+        onPanUpdate: (Sp3dGestureDetails d) {
+          if (widget.allowUserWorldRotation && _canRotationAndZoom) {
+            _rotation(d);
+          }
+          if (widget.onPanUpdate != null) {
+            widget.onPanUpdate!(d);
+          }
+        },
+        onPanEnd: (Sp3dGestureDetails d) {
+          endProcess();
+          if (widget.onPanEnd != null) {
+            widget.onPanEnd!(d);
+          }
+        },
+        onPinchStart: (Sp3dGestureDetails d) {
+          if (widget.onPinchStart != null) {
+            widget.onPinchStart!(d);
+          }
+        },
+        onPinchUpdate: (Sp3dGestureDetails d) {
+          if (widget.allowUserWorldZoom && _canRotationAndZoom) {
+            _zoom(d);
+          }
+          if (widget.onPinchUpdate != null) {
+            widget.onPinchUpdate!(d);
+          }
+        },
+        onPinchEnd: (Sp3dGestureDetails d) {
+          if (widget.onPinchEnd != null) {
+            widget.onPinchEnd!(d);
+          }
+        },
+        onScroll: (Sp3dGestureDetails d) {
+          if (widget.allowUserWorldZoom && _canRotationAndZoom) {
+            _zoom(d);
+          }
+          if (widget.onMouseScroll != null) {
+            widget.onMouseScroll!(d);
+          }
+        },
+        behavior: widget.behavior,
+        child: CustomPaint(
+          painter: _Sp3dCanvasPainter(widget),
+          size: widget.size,
+        ),
+      );
     } else {
       return CustomPaint(
         painter: _Sp3dCanvasPainter(widget),
@@ -207,26 +270,41 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
     }
   }
 
-  /// world rotation
-  void _rotation(Offset offset) {
+  /// world zoom
+  void _zoom(Sp3dGestureDetails d) {
     setState(() {
-      final Sp3dV3D nowP = Sp3dV3D(offset.dx, offset.dy, 0);
+      // y方向の値にズーム量をかけた値でズームする。
+      if (widget.isMouseScrollSameVector) {
+        widget.camera.focusLength =
+            widget.camera.focusLength - (d.diffV.y * widget.zoomSpeed);
+      } else {
+        widget.camera.focusLength =
+            widget.camera.focusLength + (d.diffV.y * widget.zoomSpeed);
+      }
+      // マイナス値は計算が反転するため許容しない。
+      if (widget.camera.focusLength < 0) {
+        widget.camera.focusLength = 1;
+      }
+    });
+  }
+
+  /// world rotation
+  void _rotation(Sp3dGestureDetails d) {
+    setState(() {
       // 始点ベースにして戻り方向を有効にする。
-      final Sp3dV3D diff = (nowP - _sp) * widget.rotationSpeed;
+      final Sp3dV2D diff = (d.nowV - _sp) * widget.rotationSpeed;
       // 前の軸から、今の軸へスムーズに移動させる
       _diff = _lastDiff + diff;
       // 前回の回転分を考慮した角度。
       double angle = _diff.len();
       if (angle > 360 || angle < -360) {
         // 360度以上の回転に対応
-        _diff.x = 0.0;
-        _diff.y = 0.0;
-        _diff.z = 0.0;
-        _lastDiff = Sp3dV3D(0, 0, 0);
-        _sp = nowP;
+        _diff = _zero;
+        _lastDiff = _zero;
+        _sp = d.nowV;
         angle = 0;
       }
-      // 回転軸。
+      // 回転軸。xとyを反転させる必要がある。
       _axis = Sp3dV3D(_diff.y, _diff.x, 0).nor();
       widget.camera.rotate(_axis, angle * pi / 180);
     });
@@ -253,9 +331,7 @@ class _Sp3dCanvasPainter extends CustomPainter {
         w.camera.getPrams(w.world, w.worldOrigin);
     // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
     allFaces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
-    if (w.allowFullCtrl) {
-      w.world.sortedAllFaces = allFaces;
-    }
+    w.world.sortedAllFaces = allFaces;
     // 描画
     for (final Sp3dFaceObj fo in allFaces) {
       // パスを描画

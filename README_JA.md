@@ -151,7 +151,7 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 
 ## タッチイベントの取得方法と、動的なオブジェクトの変更方法。
 例えば、サンプルコードを以下のように書き換えます。  
-onPanDownListenerの戻り値は、タッチされたサーフェスに関する情報を含むクラスです。  
+onPanDownの戻り値（Sp3dFaceObj）は、タッチされたサーフェスに関する情報を含むクラスです。  
 このサンプルでは、この情報を使用して、ユーザーがタッチしたオブジェクトを移動しています。  
 ```dart
   // _MyAppStateの変数を追加してください.
@@ -159,36 +159,51 @@ onPanDownListenerの戻り値は、タッチされたサーフェスに関する
   --------------------------------------------------------------------
   // Sp3dRendererを書き換えます.
   Sp3dRenderer(
-    Size(800, 800),
-    Sp3dV2D(400, 400),
-    this.world,
+    const Size(800, 800),
+    const Sp3dV2D(400, 400),
+    world,
     // If you want to reduce distortion, shoot from a distance at high magnification.
     Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
     Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
-    allowFullCtrl: true,
     allowUserWorldRotation: true,
     checkTouchObj: true,
-    vn: this.vn,
-    onPanDownListener: (Offset offset, Sp3dFaceObj? info){
+    vn: vn,
+    onPanDown: (Sp3dGestureDetails d, Sp3dFaceObj? info){
       print("onPanDown");
       if(info!=null) {
         info.obj.move(Sp3dV3D(50, 0, 0));
-        this.vn.value++;
+        vn.value++;
       }
     },
-    onPanCancelListener: (){
+    onPanCancel: (){
       print("onPanCancel");
     },
-    onPanStartListener: (Offset offset){
+    onPanStart: (Sp3dGestureDetails d){
       print("onPanStart");
-      print(offset);
+      print(d.toOffset());
     },
-    onPanUpdateListener: (Offset offset){
+    onPanUpdate: (Sp3dGestureDetails d){
       print("onPanUpdate");
-      print(offset);
+      print(d.toOffset());
     },
-    onPanEndListener: (){
+    onPanEnd: (Sp3dGestureDetails d){
       print("onPanEnd");
+    },
+    onPinchStart: (Sp3dGestureDetails d){
+      print("onPinchStart");
+      print(d.diffV);
+    },
+    onPinchUpdate: (Sp3dGestureDetails d){
+      print("onPinchUpdate");
+      print(d.diffV);
+    },
+    onPinchEnd: (Sp3dGestureDetails d){
+      print("onPinchEnd");
+      print(d.diffV);
+    },
+    onMouseScroll: (Sp3dGestureDetails d){
+      print("onMouseScroll");
+      print(d.diffV);
     },
   )
 ```

@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
             children: [
               Sp3dRenderer(
                 const Size(800, 800),
-                Sp3dV2D(400, 400),
+                const Sp3dV2D(400, 400),
                 world,
                 // If you want to reduce distortion, shoot from a distance at high magnification.
                 Sp3dCamera(Sp3dV3D(0, 0, 3000), 6000),
@@ -154,7 +154,7 @@ obj.materials[0].textureCoordinates = [Offset(0,0),Offset(64,128),Offset(128,0)]
 
 ## How to follow a user's touch event
 For example, rewrite sample code as follows.  
-The return value in onPanDownListener is a class that contains information about the touched surface.  
+The return value Sp3dFaceObj in onPanDown is a class that contains information about the touched surface.  
 The sample uses this information to move the object touched by the user.  
 ```dart
   // Add variable to _MyAppState.
@@ -162,36 +162,51 @@ The sample uses this information to move the object touched by the user.
   --------------------------------------------------------------------
   // Rewrite Sp3dRenderer.
   Sp3dRenderer(
-    Size(800, 800),
-    Sp3dV2D(400, 400),
-    this.world,
+    const Size(800, 800),
+    const Sp3dV2D(400, 400),
+    world,
     // If you want to reduce distortion, shoot from a distance at high magnification.
     Sp3dCamera(Sp3dV3D(0, 0, 30000), 60000),
     Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
-    allowFullCtrl: true,
     allowUserWorldRotation: true,
     checkTouchObj: true,
-    vn: this.vn,
-    onPanDownListener: (Offset offset, Sp3dFaceObj? info){
+    vn: vn,
+    onPanDown: (Sp3dGestureDetails d, Sp3dFaceObj? info){
       print("onPanDown");
       if(info!=null) {
         info.obj.move(Sp3dV3D(50, 0, 0));
-        this.vn.value++;
+        vn.value++;
       }
     },
-    onPanCancelListener: (){
+    onPanCancel: (){
       print("onPanCancel");
     },
-    onPanStartListener: (Offset offset){
+    onPanStart: (Sp3dGestureDetails d){
       print("onPanStart");
-      print(offset);
+      print(d.toOffset());
     },
-    onPanUpdateListener: (Offset offset){
+    onPanUpdate: (Sp3dGestureDetails d){
       print("onPanUpdate");
-      print(offset);
+      print(d.toOffset());
     },
-    onPanEndListener: (){
+    onPanEnd: (Sp3dGestureDetails d){
       print("onPanEnd");
+    },
+    onPinchStart: (Sp3dGestureDetails d){
+      print("onPinchStart");
+      print(d.diffV);
+    },
+    onPinchUpdate: (Sp3dGestureDetails d){
+      print("onPinchUpdate");
+      print(d.diffV);
+    },
+    onPinchEnd: (Sp3dGestureDetails d){
+      print("onPinchEnd");
+      print(d.diffV);
+    },
+    onMouseScroll: (Sp3dGestureDetails d){
+      print("onMouseScroll");
+      print(d.diffV);
     },
   )
 ```

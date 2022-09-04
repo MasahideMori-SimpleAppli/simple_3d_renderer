@@ -1,3 +1,10 @@
+## 6.0.0
+* Enhanced user gesture detection. Since the detector in Sp3dRenderer has been replaced with Sp3dGestureDetector, the callback arguments have changed.
+* Supports user zoom operation. Added pinch and mouse scroll callbacks to Sp3dRenderer.
+* Some Sp3dRenderer parameter names have been shortened.
+* allowFullCtrl has been deprecated. This makes it behave like allowFullCtrl=true whenever useUserGesture is true.
+* Sp3dV2D has more features than before and now supports some basic calculations.
+
 ## 5.0.0
 * Refactored the structure for future development.
 * Some speedup.

@@ -17,7 +17,7 @@ class Sp3dPaintImage {
   final Sp3dMaterial material;
 
   // 変換行列の元
-  Float64List f64 = Float64List.fromList([
+  static final Float64List _f64 = Float64List.fromList([
     1.0,
     0.0,
     0.0,
@@ -40,7 +40,7 @@ class Sp3dPaintImage {
   late List<Offset> textureCoordinates;
 
   // 色情報。画像の場合は全て黒。
-  static const List<Color> colors = [
+  static const List<Color> _colors = [
     Color.fromARGB(255, 0, 0, 0),
     Color.fromARGB(255, 0, 0, 0),
     Color.fromARGB(255, 0, 0, 0),
@@ -50,7 +50,7 @@ class Sp3dPaintImage {
   ];
 
   // 色情報と頂点のインデックス。
-  static const List<int> indices = [0, 1, 2, 3, 4, 5];
+  static const List<int> _indices = [0, 1, 2, 3, 4, 5];
 
   Paint p = Paint();
 
@@ -66,7 +66,7 @@ class Sp3dPaintImage {
   /// Returns: If success, true.
   Future<bool> createShader(Image image) async {
     try {
-      final Float64List mf64 = f64.sublist(0);
+      final Float64List mf64 = _f64.sublist(0);
       p.shader = ImageShader(image, TileMode.mirror, TileMode.mirror, mf64);
       textureCoordinates = _getTextureCoordinates(
           image.width.toDouble(), image.height.toDouble());
@@ -116,8 +116,8 @@ class Sp3dPaintImage {
       VertexMode.triangleStrip,
       verts,
       textureCoordinates: textureCoordinates.sublist(0, listEnd),
-      colors: colors.sublist(0, listEnd),
-      indices: indices.sublist(0, listEnd),
+      colors: _colors.sublist(0, listEnd),
+      indices: _indices.sublist(0, listEnd),
     );
   }
 
