@@ -1,3 +1,7 @@
+## 7.0.0
+* More options for zoom manipulation. You can now easily set the zoom speed for mouse scrolling and pinching. Sp3dRenderer's optional arguments have changed.
+* Added Sp3dCameraZoomController class. By overriding the methods of this class, you have full control over the camera's zoom. This class is a new optional argument for Sp3dRenderer.
+
 ## 6.0.0
 * Enhanced user gesture detection. Since the detector in Sp3dRenderer has been replaced with Sp3dGestureDetector, the callback arguments have changed.
 * Supports user zoom operation. Added pinch and mouse scroll callbacks to Sp3dRenderer.

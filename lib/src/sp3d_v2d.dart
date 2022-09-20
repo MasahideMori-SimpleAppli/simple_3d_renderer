@@ -1,6 +1,5 @@
 import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 ///
 /// (en)A class for handling 2D vectors. This class acts as Final and cannot change its value.

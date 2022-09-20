@@ -7,6 +7,7 @@ import 'sp3d_light.dart';
 import 'sp3d_world.dart';
 import 'sp3d_camera.dart';
 import 'sp3d_v2d.dart';
+import 'sp3d_camera_zoom_controller.dart';
 
 ///
 /// (en)A widget for rendering Sp3dWorld.
@@ -21,7 +22,7 @@ import 'sp3d_v2d.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   final String className = 'Sp3dRenderer';
-  final String version = '8';
+  final String version = '9';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
@@ -33,8 +34,10 @@ class Sp3dRenderer extends StatefulWidget {
   final bool checkTouchObj;
   final ValueNotifier<int>? vn;
   final double rotationSpeed;
-  final double zoomSpeed;
+  final double pinchZoomSpeed;
+  final double mouseZoomSpeed;
   final bool isMouseScrollSameVector;
+  final Sp3dCameraZoomController zoomController;
 
   // タッチリスナの定義。速度の問題があるので、onPanDownでのみ当たり判定の演算を行い、当たり判定があれば情報クラスを返す。
   final void Function(Sp3dGestureDetails details, Sp3dFaceObj?)? onPanDown;
@@ -81,8 +84,10 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [behavior] : Specification about the hit judgment area of the child widget.
   /// * [vn] : ValueNotifier. If update this notifier.value, custom painter in renderer will repaint.
   /// * [rotationSpeed] : The rotation speed of the camera relative to the amount of swipe by the user.
-  /// * [zoomSpeed] : The zoom speed of the camera relative to the amount of pinch by the user.
+  /// * [pinchZoomSpeed] : The zoom speed of the camera relative to the amount of pinch by the user.
+  /// * [mouseZoomSpeed] : The zoom speed of the camera relative to the amount of mouse scroll by the user.
   /// * [isMouseScrollSameVector] : Controls the zoom direction when scrolling with the mouse.
+  /// * [zoomController] : Optional argument if you want non-linear camera zoom behavior.
   const Sp3dRenderer(
       this.size, this.worldOrigin, this.world, this.camera, this.light,
       {Key? key,
@@ -103,8 +108,10 @@ class Sp3dRenderer extends StatefulWidget {
       this.behavior = HitTestBehavior.opaque,
       this.vn,
       this.rotationSpeed = 1.0,
-      this.zoomSpeed = 3.0,
-      this.isMouseScrollSameVector = true})
+      this.pinchZoomSpeed = 3.0,
+      this.mouseZoomSpeed = 20.0,
+      this.isMouseScrollSameVector = true,
+      this.zoomController = const Sp3dCameraZoomController()})
       : super(key: key);
 
   @override
@@ -237,7 +244,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
         },
         onPinchUpdate: (Sp3dGestureDetails d) {
           if (widget.allowUserWorldZoom && _canRotationAndZoom) {
-            _zoom(d);
+            _zoom(d, false);
           }
           if (widget.onPinchUpdate != null) {
             widget.onPinchUpdate!(d);
@@ -250,7 +257,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
         },
         onScroll: (Sp3dGestureDetails d) {
           if (widget.allowUserWorldZoom && _canRotationAndZoom) {
-            _zoom(d);
+            _zoom(d, true);
           }
           if (widget.onMouseScroll != null) {
             widget.onMouseScroll!(d);
@@ -271,20 +278,14 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
   }
 
   /// world zoom
-  void _zoom(Sp3dGestureDetails d) {
+  void _zoom(Sp3dGestureDetails d, bool isMouse) {
+    final double mulValue =
+        isMouse ? widget.mouseZoomSpeed : widget.pinchZoomSpeed;
+    final zoomV = widget.isMouseScrollSameVector
+        ? d.diffV.y * mulValue * -1
+        : d.diffV.y * mulValue;
     setState(() {
-      // y方向の値にズーム量をかけた値でズームする。
-      if (widget.isMouseScrollSameVector) {
-        widget.camera.focusLength =
-            widget.camera.focusLength - (d.diffV.y * widget.zoomSpeed);
-      } else {
-        widget.camera.focusLength =
-            widget.camera.focusLength + (d.diffV.y * widget.zoomSpeed);
-      }
-      // マイナス値は計算が反転するため許容しない。
-      if (widget.camera.focusLength < 0) {
-        widget.camera.focusLength = 1;
-      }
+      widget.zoomController.apply(widget.camera, zoomV, isMouse);
     });
   }
 
