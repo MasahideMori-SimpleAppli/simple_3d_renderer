@@ -14,7 +14,7 @@ import 'sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   String get className => 'Sp3dWorld';
-  String get version => '6';
+  String get version => '7';
   List<Sp3dObj> objs;
 
   // 以下はディープコピーなどが不要な一時変数。
