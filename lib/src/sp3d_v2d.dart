@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 @immutable
 class Sp3dV2D {
   final String className = 'Sp3dV2D';
-  final String version = '4';
+  final String version = '5';
   final double x;
   final double y;
 
@@ -24,6 +24,13 @@ class Sp3dV2D {
 
   Sp3dV2D deepCopy() {
     return Sp3dV2D(x, y);
+  }
+
+  /// Creates a copy with only the specified values rewritten.
+  /// * [x] : The x coordinate of the 2D vertex.
+  /// * [y] : The y coordinate of the 2D vertex.
+  Sp3dV2D copyWith({double? x, double? y}) {
+    return Sp3dV2D(x ?? this.x, y ?? this.y);
   }
 
   Map<String, dynamic> toDict() {

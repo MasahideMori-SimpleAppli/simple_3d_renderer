@@ -21,8 +21,8 @@ import 'sp3d_camera_zoom_controller.dart';
 /// First edition creation date 2021-07-18 15:41:26
 ///
 class Sp3dRenderer extends StatefulWidget {
-  final String className = 'Sp3dRenderer';
-  final String version = '9';
+  String get className => 'Sp3dRenderer';
+  String get version => '10';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;

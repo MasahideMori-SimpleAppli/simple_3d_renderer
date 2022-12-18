@@ -12,8 +12,8 @@ import 'sp3d_world.dart';
 /// First edition creation date 2021-09-30 12:05:24
 ///
 class Sp3dCamera {
-  final String className = 'Sp3dCamera';
-  final String version = '6';
+  String get className => 'Sp3dCamera';
+  String get version => '7';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;

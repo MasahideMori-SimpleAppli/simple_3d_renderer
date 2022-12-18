@@ -1,3 +1,8 @@
+## 8.0.0
+* Added Sp3dOrthographicCamera class.
+* Added copyWith method to Sp3dV2D.
+* Changed the way variables are held in some classes to make it easier to extend.
+
 ## 7.0.0
 * More options for zoom manipulation. You can now easily set the zoom speed for mouse scrolling and pinching. Sp3dRenderer's optional arguments have changed.
 * Added Sp3dCameraZoomController class. By overriding the methods of this class, you have full control over the camera's zoom. This class is a new optional argument for Sp3dRenderer.

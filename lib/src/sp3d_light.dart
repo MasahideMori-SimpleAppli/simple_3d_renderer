@@ -12,8 +12,8 @@ import 'package:simple_3d/simple_3d.dart';
 ///
 @immutable
 class Sp3dLight {
-  final String className = 'Sp3dLight';
-  final String version = '4';
+  String get className => 'Sp3dLight';
+  String get version => '5';
   final Sp3dV3D direction;
   final double minBrightness;
   final bool applyStroke;
