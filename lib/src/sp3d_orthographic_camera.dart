@@ -20,7 +20,7 @@ class Sp3dOrthographicCamera extends Sp3dCamera {
   String get className => 'Sp3dOrthographicCamera';
 
   @override
-  String get version => '1';
+  String get version => '2';
 
   /// Constructor
   /// * [position] : Camera position in the world.
@@ -42,5 +42,15 @@ class Sp3dOrthographicCamera extends Sp3dCamera {
           origin.x + (v.x - position.x), origin.y + (position.y - v.y)));
     }
     return r;
+  }
+
+  /// Used to restore state.
+  static Sp3dOrthographicCamera fromDict(Map<String, dynamic> src) {
+    return Sp3dOrthographicCamera(
+        Sp3dV3D.fromDict(src['position']), src['focus_length'],
+        rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),
+        radian: src['radian'],
+        isAllDrawn:
+            src.containsKey('is_all_drawn') ? src['is_all_drawn'] : false);
   }
 }

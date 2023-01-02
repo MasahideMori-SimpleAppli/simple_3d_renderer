@@ -13,7 +13,7 @@ import 'sp3d_world.dart';
 ///
 class Sp3dCamera {
   String get className => 'Sp3dCamera';
-  String get version => '7';
+  String get version => '8';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;
@@ -35,11 +35,13 @@ class Sp3dCamera {
     rotate(this.rotateAxis, radian);
   }
 
+  /// deep copy.
   Sp3dCamera deepCopy() {
     return Sp3dCamera(position.deepCopy(), focusLength,
         rotateAxis: rotateAxis.deepCopy(), radian: radian);
   }
 
+  /// Used to save state.
   Map<String, dynamic> toDict() {
     Map<String, dynamic> d = {};
     d['class_name'] = className;
@@ -52,6 +54,7 @@ class Sp3dCamera {
     return d;
   }
 
+  /// Used to restore state.
   static Sp3dCamera fromDict(Map<String, dynamic> src) {
     return Sp3dCamera(Sp3dV3D.fromDict(src['position']), src['focus_length'],
         rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),

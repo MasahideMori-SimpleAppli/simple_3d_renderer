@@ -1,3 +1,11 @@
+## 9.0.0
+* Added Sp3dCameraRotationController class.
+* The rotationSpeed argument of Sp3dRenderer has been deprecated and replaced with the argument of Sp3dCameraRotationController.
+* Corrected the description of the apply method of Sp3dCameraZoomController.
+* Added useClipping argument to Sp3dRenderer.
+* Fixed Sp3dLight's fromDict bug.
+* Added fromDict method to Sp3dOrthographicCamera.
+
 ## 8.0.0
 * Added Sp3dOrthographicCamera class.
 * Added copyWith method to Sp3dV2D.

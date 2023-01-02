@@ -13,7 +13,7 @@ import 'package:simple_3d/simple_3d.dart';
 @immutable
 class Sp3dLight {
   String get className => 'Sp3dLight';
-  String get version => '5';
+  String get version => '6';
   final Sp3dV3D direction;
   final double minBrightness;
   final bool applyStroke;
@@ -62,7 +62,7 @@ class Sp3dLight {
   /// * [src] : A dictionary made with to_dict of this class.
   static Sp3dLight fromDict(Map<String, dynamic> src) {
     return Sp3dLight(Sp3dV3D.fromDict(src['direction']),
-        minBrightness: src['is_absolute_position'],
+        minBrightness: src['min_brightness'],
         applyStroke: src['apply_stroke'],
         syncCam: src['sync_cam']);
   }

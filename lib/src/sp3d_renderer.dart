@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
+import 'sp3d_camera_rotation_controller.dart';
 import 'sp3d_faceobj.dart';
 import 'sp3d_gesture_detector.dart';
 import 'sp3d_light.dart';
@@ -22,7 +22,8 @@ import 'sp3d_camera_zoom_controller.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   String get className => 'Sp3dRenderer';
-  String get version => '10';
+
+  String get version => '11';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
@@ -32,12 +33,13 @@ class Sp3dRenderer extends StatefulWidget {
   final bool allowUserWorldRotation;
   final bool allowUserWorldZoom;
   final bool checkTouchObj;
-  final ValueNotifier<int>? vn;
-  final double rotationSpeed;
+  late final ValueNotifier<int> vn;
   final double pinchZoomSpeed;
   final double mouseZoomSpeed;
   final bool isMouseScrollSameVector;
   final Sp3dCameraZoomController zoomController;
+  final bool useClipping;
+  late final Sp3dCameraRotationController rotationController;
 
   // タッチリスナの定義。速度の問題があるので、onPanDownでのみ当たり判定の演算を行い、当たり判定があれば情報クラスを返す。
   final void Function(Sp3dGestureDetails details, Sp3dFaceObj?)? onPanDown;
@@ -83,13 +85,13 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [onMouseScroll] : Callback at user mouse scroll. This returns a diffV with the orientation stored in y. Any other value is zero.
   /// * [behavior] : Specification about the hit judgment area of the child widget.
   /// * [vn] : ValueNotifier. If update this notifier.value, custom painter in renderer will repaint.
-  /// * [rotationSpeed] : The rotation speed of the camera relative to the amount of swipe by the user.
   /// * [pinchZoomSpeed] : The zoom speed of the camera relative to the amount of pinch by the user.
   /// * [mouseZoomSpeed] : The zoom speed of the camera relative to the amount of mouse scroll by the user.
   /// * [isMouseScrollSameVector] : Controls the zoom direction when scrolling with the mouse.
   /// * [zoomController] : Optional argument if you want non-linear camera zoom behavior.
-  const Sp3dRenderer(
-      this.size, this.worldOrigin, this.world, this.camera, this.light,
+  /// * [useClipping] : If true, the excess will be clipped.
+  /// * [rotationController] : Optional argument if you want more control over the user's camera rotation.
+  Sp3dRenderer(this.size, this.worldOrigin, this.world, this.camera, this.light,
       {Key? key,
       this.useUserGesture = true,
       this.allowUserWorldRotation = true,
@@ -106,34 +108,24 @@ class Sp3dRenderer extends StatefulWidget {
       this.onPinchEnd,
       this.onMouseScroll,
       this.behavior = HitTestBehavior.opaque,
-      this.vn,
-      this.rotationSpeed = 1.0,
+      ValueNotifier<int>? vn,
       this.pinchZoomSpeed = 3.0,
       this.mouseZoomSpeed = 20.0,
       this.isMouseScrollSameVector = true,
-      this.zoomController = const Sp3dCameraZoomController()})
-      : super(key: key);
+      this.zoomController = const Sp3dCameraZoomController(),
+      this.useClipping = false,
+      Sp3dCameraRotationController? rotationController})
+      : super(key: key) {
+    this.vn = vn ?? ValueNotifier(0);
+    this.rotationController =
+        rotationController ?? Sp3dCameraRotationController();
+  }
 
   @override
   Sp3dRendererState createState() => Sp3dRendererState();
 }
 
 class Sp3dRendererState extends State<Sp3dRenderer> {
-  // 初期値
-  static const Sp3dV2D _zero = Sp3dV2D(0, 0);
-
-  // ドラッグ開始位置
-  Sp3dV2D _sp = _zero;
-
-  // 現在の軸
-  Sp3dV3D _axis = Sp3dV3D(0, 0, 0);
-
-  // 現在の差
-  Sp3dV2D _diff = _zero;
-
-  // 以前の差
-  Sp3dV2D _lastDiff = _zero;
-
   // 当たり判定計算用のPath
   final Path _p = Path();
 
@@ -194,10 +186,24 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
     }
   }
 
+  /// If flag true, Enable clipping.
+  Widget _clippingWrap(Widget w) {
+    if (widget.useClipping) {
+      return Container(
+          decoration: const BoxDecoration(
+            shape: BoxShape.rectangle,
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: w);
+    } else {
+      return w;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.useUserGesture) {
-      return Sp3dGestureDetector(
+      return _clippingWrap(Sp3dGestureDetector(
         onPanDown: (Sp3dGestureDetails d) {
           _canRotationAndZoom = true;
           if (widget.onPanDown != null) {
@@ -210,14 +216,14 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         },
         onPanCancel: () {
-          endProcess();
+          widget.rotationController.endProcess();
           if (widget.onPanCancel != null) {
             widget.onPanCancel!();
           }
         },
         onPanStart: (Sp3dGestureDetails d) {
           if (widget.allowUserWorldRotation && _canRotationAndZoom) {
-            _sp = d.nowV;
+            widget.rotationController.sp = d.nowV;
           }
           if (widget.onPanStart != null) {
             widget.onPanStart!(d);
@@ -232,7 +238,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         },
         onPanEnd: (Sp3dGestureDetails d) {
-          endProcess();
+          widget.rotationController.endProcess();
           if (widget.onPanEnd != null) {
             widget.onPanEnd!(d);
           }
@@ -268,12 +274,12 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           painter: _Sp3dCanvasPainter(widget),
           size: widget.size,
         ),
-      );
+      ));
     } else {
-      return CustomPaint(
+      return _clippingWrap(CustomPaint(
         painter: _Sp3dCanvasPainter(widget),
         size: widget.size,
-      );
+      ));
     }
   }
 
@@ -284,36 +290,14 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
     final zoomV = widget.isMouseScrollSameVector
         ? d.diffV.y * mulValue * -1
         : d.diffV.y * mulValue;
-    setState(() {
-      widget.zoomController.apply(widget.camera, zoomV, isMouse);
-    });
+    widget.zoomController.apply(widget.camera, zoomV, isMouse);
+    widget.vn.value += 1;
   }
 
   /// world rotation
   void _rotation(Sp3dGestureDetails d) {
-    setState(() {
-      // 始点ベースにして戻り方向を有効にする。
-      final Sp3dV2D diff = (d.nowV - _sp) * widget.rotationSpeed;
-      // 前の軸から、今の軸へスムーズに移動させる
-      _diff = _lastDiff + diff;
-      // 前回の回転分を考慮した角度。
-      double angle = _diff.len();
-      if (angle > 360 || angle < -360) {
-        // 360度以上の回転に対応
-        _diff = _zero;
-        _lastDiff = _zero;
-        _sp = d.nowV;
-        angle = 0;
-      }
-      // 回転軸。xとyを反転させる必要がある。
-      _axis = Sp3dV3D(_diff.y, _diff.x, 0).nor();
-      widget.camera.rotate(_axis, angle * pi / 180);
-    });
-  }
-
-  /// run onPanCancel or onPanEnd.
-  void endProcess() {
-    _lastDiff = _diff;
+    widget.rotationController.apply(widget.camera, d);
+    widget.vn.value += 1;
   }
 }
 

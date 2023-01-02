@@ -16,13 +16,13 @@ class Sp3dCameraZoomController {
   /// Constructor
   const Sp3dCameraZoomController();
 
-  /// (en)A method that takes a camera and returns an updated zoom value.
+  /// (en)A method that gives the updated zoom value to the camera.
   /// By providing a subclass that overrides this method,
   /// you can control the zoom of the camera in detail.
   /// If you want non-linear zoom speed control,
   /// update the value appropriately according to the current focus value.
   ///
-  /// (ja)カメラを受け取り、更新されたズーム値を返すメソッドです。
+  /// (ja)カメラを受け取り、更新されたズーム値を与えるメソッドです。
   /// このメソッドをオーバーライドしたサブクラスを与えることで、
   /// カメラのズームを詳細にコントロールできます。
   /// 非線形のズームスピードコントロールを行いたい場合は、
