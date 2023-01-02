@@ -4,6 +4,7 @@ import 'sp3d_camera.dart';
 ///
 /// (en)Class for adjusting camera zoom.
 /// Creating a subclass and giving it to Sp3dRenderer allows complex camera control.
+///
 /// (ja)カメラのズームを調整するためのクラスです。
 /// サブクラスを作ってSp3dRendererに与えることで複雑なカメラコントロールが可能になります。
 ///

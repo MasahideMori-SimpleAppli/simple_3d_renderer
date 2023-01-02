@@ -5,6 +5,7 @@ import '../simple_3d_renderer.dart';
 ///
 /// (en)Class for adjusting camera rotation.
 /// Creating a subclass and giving it to Sp3dRenderer allows complex camera control.
+///
 /// (ja)カメラの回転を調整するためのクラスです。
 /// サブクラスを作ってSp3dRendererに与えることで複雑なカメラコントロールが可能になります。
 ///
