@@ -76,32 +76,156 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
       onPointerMove: _onPointerMove,
       onPointerUp: _onPointerUp,
       onPointerCancel: _onPointerCancel,
+      onPointerPanZoomStart: _onPointerPanZoomStart,
+      onPointerPanZoomUpdate: _onPointerPanZoomUpdate,
+      onPointerPanZoomEnd: _onPointerPanZoomEnd,
       onPointerSignal: _onPointerSignal,
       behavior: widget.behavior,
       child: widget.child,
     );
   }
 
+  Sp3dGestureDetails _getFirstGestureDetails(
+      int pointer, Offset localPosition) {
+    return Sp3dGestureDetails(
+        pointer,
+        Sp3dV2D(localPosition.dx, localPosition.dy),
+        Sp3dV2D(localPosition.dx, localPosition.dy),
+        const Sp3dV2D(0, 0));
+  }
+
+  Sp3dGestureDetails _getScrollGestureDetails(int pointer, double scrollDelta) {
+    if (scrollDelta > 0) {
+      return Sp3dGestureDetails(pointer, _zero, _zero, const Sp3dV2D(0, 100));
+    } else {
+      return Sp3dGestureDetails(pointer, _zero, _zero, const Sp3dV2D(0, -100));
+    }
+  }
+
+  Sp3dGestureDetails _updateTouchesAndGetGestureDetails(
+      int pointer, Offset localPosition) {
+    final Sp3dV2D preP =
+        Sp3dV2D(_touches[pointer]!.nowP.dx, _touches[pointer]!.nowP.dy);
+    final Sp3dV2D nowP = Sp3dV2D(localPosition.dx, localPosition.dy);
+    _touches[pointer]!.nowP = localPosition;
+    return Sp3dGestureDetails(
+        pointer,
+        Sp3dV2D(_touches[pointer]!.sP.dx, _touches[pointer]!.sP.dy),
+        nowP,
+        (_gType == EnumGestureType.tapDown ||
+                _gType == EnumGestureType.panUpdate ||
+                _gType == EnumGestureType.pointerPan)
+            ? nowP - preP
+            : _getPinchV(pointer, preP, nowP));
+  }
+
+  Sp3dGestureDetails _updateTouchesAndGetGestureDetailsForTrackPadPan(
+      int pointer, Offset localDelta) {
+    final Sp3dV2D preP =
+        Sp3dV2D(_touches[pointer]!.nowP.dx, _touches[pointer]!.nowP.dy);
+    final Sp3dV2D nowP = preP + Sp3dV2D(localDelta.dx, localDelta.dy);
+    _touches[pointer]!.nowP = Offset(nowP.x, nowP.y);
+    return Sp3dGestureDetails(
+        pointer,
+        Sp3dV2D(_touches[pointer]!.sP.dx, _touches[pointer]!.sP.dy),
+        nowP,
+        nowP - preP);
+  }
+
+  void _onPointerPanZoomStart(PointerPanZoomStartEvent event) {
+    _gType = EnumGestureType.pointerPanZoomStart;
+    _touches[event.pointer] =
+        (_TouchEvent(event.pointer, event.localPosition, event.localPosition));
+    final Sp3dGestureDetails cds =
+        _getFirstGestureDetails(event.pointer, event.localPosition);
+    if (widget.onPanDown != null) {
+      widget.onPanDown!(cds);
+    }
+    _gType = EnumGestureType.secondTapDown;
+    if (widget.onSecondPanDown != null) {
+      widget.onSecondPanDown!(cds);
+    }
+  }
+
+  void _onPointerPanZoomUpdate(PointerPanZoomUpdateEvent event) {
+    if (!_touches.containsKey(event.pointer)) {
+      return;
+    }
+    // switch pan or zoom
+    if (event.scale == 1.0) {
+      // pan
+      final bool isUpdate = _gType == EnumGestureType.pointerPan;
+      // if switch
+      if (_gType == EnumGestureType.pointerZoom) {
+        // マウススクロール扱いでズーム。
+        if (widget.onScroll != null) {
+          widget.onScroll!(_getScrollGestureDetails(
+              event.pointer, event.scale < 1.0 ? 1 : -1));
+        }
+      }
+      _gType = EnumGestureType.pointerPan;
+      // must update
+      final Sp3dGestureDetails cds =
+          _updateTouchesAndGetGestureDetailsForTrackPadPan(
+              event.pointer, event.localPanDelta);
+      if (isUpdate) {
+        if (widget.onPanUpdate != null) {
+          widget.onPanUpdate!(cds);
+        }
+      } else {
+        if (widget.onPanStart != null) {
+          widget.onPanStart!(cds);
+        }
+      }
+    } else {
+      // zoom
+      // if switch
+      if (_gType == EnumGestureType.pointerPan) {
+        if (widget.onPanEnd != null) {
+          widget.onPanEnd!(_updateTouchesAndGetGestureDetails(
+              event.pointer, event.localPosition));
+        }
+      }
+      _gType = EnumGestureType.pointerZoom;
+      // マウススクロール扱いでズーム。
+      final Sp3dGestureDetails cds =
+          _getScrollGestureDetails(event.pointer, event.scale < 1.0 ? 1 : -1);
+      if (widget.onScroll != null) {
+        widget.onScroll!(cds);
+      }
+    }
+  }
+
+  void _onPointerPanZoomEnd(PointerPanZoomEndEvent event) {
+    final Sp3dGestureDetails cds =
+        _updateTouchesAndGetGestureDetails(event.pointer, event.localPosition);
+    if (_gType == EnumGestureType.pointerPan) {
+      if (widget.onPanEnd != null) {
+        widget.onPanEnd!(cds);
+      }
+    } else {
+      if (widget.onScroll != null) {
+        widget.onScroll!(cds);
+      }
+    }
+    // 使い終わったオブジェクトを破棄。
+    _touches.remove(event.pointer);
+  }
+
   void _onPointerDown(PointerDownEvent event) {
     _touches[event.pointer] =
         (_TouchEvent(event.pointer, event.localPosition, event.localPosition));
+    final Sp3dGestureDetails cds =
+        _getFirstGestureDetails(event.pointer, event.localPosition);
     if (_touches.length == 1) {
       _gType = EnumGestureType.tapDown;
       if (widget.onPanDown != null) {
-        widget.onPanDown!(Sp3dGestureDetails(
-            event.pointer,
-            Sp3dV2D(event.localPosition.dx, event.localPosition.dy),
-            Sp3dV2D(event.localPosition.dx, event.localPosition.dy),
-            const Sp3dV2D(0, 0)));
+        widget.onPanDown!(cds);
       }
     } else if (_touches.length == 2) {
       _gType = EnumGestureType.secondTapDown;
       if (widget.onSecondPanDown != null) {
-        widget.onSecondPanDown!(Sp3dGestureDetails(
-            event.pointer,
-            Sp3dV2D(event.localPosition.dx, event.localPosition.dy),
-            Sp3dV2D(event.localPosition.dx, event.localPosition.dy),
-            const Sp3dV2D(0, 0)));
+        widget.onSecondPanDown!(cds);
       }
     } else {
       _gType = EnumGestureType.unknown;
@@ -109,10 +233,10 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
   }
 
   /// ２点の距離の変化によってズーム用に変換されたパラメータを返す。
-  Sp3dV2D _getPinchV(PointerEvent event, Sp3dV2D preP, Sp3dV2D nowP) {
+  Sp3dV2D _getPinchV(int pointer, Sp3dV2D preP, Sp3dV2D nowP) {
     Sp3dV2D? other;
     for (_TouchEvent i in _touches.values) {
-      if (i.serial != event.pointer) {
+      if (i.serial != pointer) {
         other = Sp3dV2D(i.nowP.dx, i.nowP.dy);
         break;
       }
@@ -134,19 +258,9 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
     if (!_touches.containsKey(event.pointer)) {
       return;
     }
-    final Sp3dV2D preP = Sp3dV2D(
-        _touches[event.pointer]!.nowP.dx, _touches[event.pointer]!.nowP.dy);
-    final Sp3dV2D nowP =
-        Sp3dV2D(event.localPosition.dx, event.localPosition.dy);
-    final callbackDetails = Sp3dGestureDetails(
-        event.pointer,
-        Sp3dV2D(_touches[event.pointer]!.sP.dx, _touches[event.pointer]!.sP.dy),
-        nowP,
-        (_gType == EnumGestureType.tapDown ||
-                _gType == EnumGestureType.panUpdate)
-            ? nowP - preP
-            : _getPinchV(event, preP, nowP));
-    _touches[event.pointer]!.nowP = event.localPosition;
+    // must update
+    final callbackDetails =
+        _updateTouchesAndGetGestureDetails(event.pointer, event.localPosition);
     if (_gType == EnumGestureType.tapDown) {
       _gType = EnumGestureType.panUpdate;
       if (widget.onPanStart != null) {
@@ -174,19 +288,8 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
     if (!_touches.containsKey(event.pointer)) {
       return;
     }
-    final Sp3dV2D preP = Sp3dV2D(
-        _touches[event.pointer]!.nowP.dx, _touches[event.pointer]!.nowP.dy);
-    final Sp3dV2D nowP =
-        Sp3dV2D(event.localPosition.dx, event.localPosition.dy);
-    final callbackDetails = Sp3dGestureDetails(
-        event.pointer,
-        Sp3dV2D(_touches[event.pointer]!.sP.dx, _touches[event.pointer]!.sP.dy),
-        nowP,
-        (_gType == EnumGestureType.tapDown ||
-                _gType == EnumGestureType.panUpdate)
-            ? nowP - preP
-            : _getPinchV(event, preP, nowP));
-    _touches[event.pointer]!.nowP = event.localPosition;
+    final callbackDetails =
+        _updateTouchesAndGetGestureDetails(event.pointer, event.localPosition);
     if (_gType == EnumGestureType.tapDown) {
       if (widget.onPanCancel != null) {
         widget.onPanCancel!();
@@ -230,13 +333,8 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
   void _onPointerSignal(PointerSignalEvent event) {
     if (event is PointerScrollEvent) {
       if (widget.onScroll != null) {
-        if (event.scrollDelta.dy > 0) {
-          widget.onScroll!(Sp3dGestureDetails(
-              event.pointer, _zero, _zero, const Sp3dV2D(0, 100)));
-        } else {
-          widget.onScroll!(Sp3dGestureDetails(
-              event.pointer, _zero, _zero, const Sp3dV2D(0, -100)));
-        }
+        widget.onScroll!(
+            _getScrollGestureDetails(event.pointer, event.scrollDelta.dy));
       }
     }
   }
@@ -280,6 +378,10 @@ enum EnumGestureType {
   panUpdate,
   // Tow finger pinch-in or pinch-out.
   pinchUpdate,
+  // Trackpad event(It doesn't happen on the web).
+  pointerPanZoomStart,
+  pointerPan,
+  pointerZoom,
   // Non tap yet.
   none,
   // e.g. 3 tap or over.

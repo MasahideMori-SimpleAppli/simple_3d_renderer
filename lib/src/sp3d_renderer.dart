@@ -23,7 +23,7 @@ import 'sp3d_camera_zoom_controller.dart';
 class Sp3dRenderer extends StatefulWidget {
   String get className => 'Sp3dRenderer';
 
-  String get version => '11';
+  String get version => '12';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
@@ -249,7 +249,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         },
         onPinchUpdate: (Sp3dGestureDetails d) {
-          if (widget.allowUserWorldZoom && _canRotationAndZoom) {
+          if (widget.allowUserWorldZoom) {
             _zoom(d, false);
           }
           if (widget.onPinchUpdate != null) {
@@ -262,7 +262,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         },
         onScroll: (Sp3dGestureDetails d) {
-          if (widget.allowUserWorldZoom && _canRotationAndZoom) {
+          if (widget.allowUserWorldZoom) {
             _zoom(d, true);
           }
           if (widget.onMouseScroll != null) {
