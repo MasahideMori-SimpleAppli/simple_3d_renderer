@@ -14,8 +14,10 @@ import 'sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   String get className => 'Sp3dWorld';
-  String get version => '7';
+
+  String get version => '8';
   List<Sp3dObj> objs;
+  final bool useLayer;
 
   // 以下はディープコピーなどが不要な一時変数。
   // コンバートされた各オブジェクトごとの画像情報
@@ -27,10 +29,13 @@ class Sp3dWorld {
   // 以下は一次データであるため保存されない。
   // タッチ制御のために保存されるレンダリング座標情報。汎用性のために外部からも参照可能にする。
   List<Sp3dFaceObj> sortedAllFaces = [];
+  List<List<Sp3dObj>> layers = [];
 
   /// Constructor
   /// * [objs] : World obj.
-  Sp3dWorld(this.objs);
+  /// * [useLayer] : If true, The drawing order is forced by the layer number from the smallest.
+  /// Call initLayer to activate it.
+  Sp3dWorld(this.objs, {this.useLayer = false});
 
   /// Deep copy the world.
   /// Initialization must be performed again.
@@ -40,7 +45,7 @@ class Sp3dWorld {
     for (Sp3dObj i in objs) {
       mObjs.add(i.deepCopy());
     }
-    return Sp3dWorld(mObjs);
+    return Sp3dWorld(mObjs, useLayer: useLayer);
   }
 
   /// Convert to Map.
@@ -53,6 +58,7 @@ class Sp3dWorld {
       mObjs.add(i.toDict());
     }
     d['objs'] = mObjs;
+    d['use_layer'] = useLayer;
     return d;
   }
 
@@ -62,7 +68,8 @@ class Sp3dWorld {
     for (Map<String, dynamic> i in src['objs']) {
       mObjs.add(Sp3dObj.fromDict(i));
     }
-    return Sp3dWorld(mObjs);
+    return Sp3dWorld(mObjs,
+        useLayer: src.containsKey('use_layer') ? src['use_layer'] : false);
   }
 
   /// (en)Converts Uint8List to an image class and returns it.
@@ -102,6 +109,35 @@ class Sp3dWorld {
       }
     }
     return r.keys.toList();
+  }
+
+  /// (en)Reconfigure the drawing order according to the layerNum set for each Sp3dObj.
+  /// You will also need to call this again if you edited the Sp3dObj list or layerNum.
+  ///
+  /// (ja)各Sp3dObjに設定されたlayerNumに従って描画順を再構成します。
+  /// Sp3dObjのリストやlayerNumを編集した場合にもこれを再度呼びだす必要があります。
+  ///
+  /// Return: This object.
+  Sp3dWorld initLayer() {
+    layers.clear();
+    if (objs.isNotEmpty) {
+      objs.sort((a, b) => a.layerNum.compareTo(b.layerNum));
+      int? nowLayerNum;
+      for (Sp3dObj i in objs) {
+        if (nowLayerNum == null) {
+          nowLayerNum = i.layerNum;
+          layers.add([i]);
+        } else {
+          if (nowLayerNum == i.layerNum) {
+            layers.last.add(i);
+          } else {
+            nowLayerNum = i.layerNum;
+            layers.add([i]);
+          }
+        }
+      }
+    }
+    return this;
   }
 
   /// (en)Places the object at the specified coordinates in the world.

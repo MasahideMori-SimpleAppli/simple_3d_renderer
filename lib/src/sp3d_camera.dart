@@ -1,7 +1,6 @@
 import 'package:simple_3d/simple_3d.dart';
 import 'sp3d_faceobj.dart';
 import 'sp3d_v2d.dart';
-import 'sp3d_world.dart';
 
 /// (en)It is a camera for shooting Sp3dWorld.
 ///
@@ -13,7 +12,7 @@ import 'sp3d_world.dart';
 ///
 class Sp3dCamera {
   String get className => 'Sp3dCamera';
-  String get version => '8';
+  String get version => '9';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;
@@ -118,13 +117,13 @@ class Sp3dCamera {
   /// (ja)描画用のデータオブジェクトを生成して返します。
   /// 戻り値には描画対象外のデータは含まれません。
   ///
-  /// * [world] : The World Obj.
+  /// * [objs] : The World Obj list.
   /// * [origin] : The world origin in canvas.
   ///
   /// Returns calculated data.
-  List<Sp3dFaceObj> getPrams(Sp3dWorld world, Sp3dV2D origin) {
+  List<Sp3dFaceObj> getPrams(List<Sp3dObj> objs, Sp3dV2D origin) {
     List<Sp3dFaceObj> r = [];
-    for (Sp3dObj obj in world.objs) {
+    for (Sp3dObj obj in objs) {
       final List<Sp3dV2D> conv2d = convert(obj, origin);
       for (Sp3dFragment i in obj.fragments) {
         for (Sp3dFace j in i.faces) {

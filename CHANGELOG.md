@@ -1,3 +1,8 @@
+## 10.0.0
+
+* Added ability to layer drawings. By enabling useLayer in Sp3dWorld, Sp3dRenderer will tuning the
+  drawing order with the layerNum parameter in Sp3dObj.
+
 ## 9.1.0
 
 * Added trackpads support for Windows. This update now supports pan and zoom. This is a feature

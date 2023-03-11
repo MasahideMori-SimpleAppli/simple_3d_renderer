@@ -23,7 +23,7 @@ import 'sp3d_camera_zoom_controller.dart';
 class Sp3dRenderer extends StatefulWidget {
   String get className => 'Sp3dRenderer';
 
-  String get version => '12';
+  String get version => '13';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
@@ -312,10 +312,20 @@ class _Sp3dCanvasPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // カメラで撮影した２次元座標とカメラまでの距離などを含むデータオブジェクトを取得。
     // なお、描画対象外のオブジェクトはここで除外される。
-    final List<Sp3dFaceObj> allFaces =
-        w.camera.getPrams(w.world, w.worldOrigin);
-    // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
-    allFaces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
+    List<Sp3dFaceObj> allFaces = [];
+    if (w.world.useLayer) {
+      // レイヤー順に描画するように調整。
+      for (final i in w.world.layers) {
+        List<Sp3dFaceObj> faces = w.camera.getPrams(i, w.worldOrigin);
+        // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
+        faces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
+        allFaces.addAll(faces);
+      }
+    } else {
+      allFaces = w.camera.getPrams(w.world.objs, w.worldOrigin);
+      // z軸を基準にして遠いところから順番に塗りつぶすために全てのfaceを逆順ソート。
+      allFaces.sort((Sp3dFaceObj a, Sp3dFaceObj b) => b.dist.compareTo(a.dist));
+    }
     w.world.sortedAllFaces = allFaces;
     // 描画
     for (final Sp3dFaceObj fo in allFaces) {
