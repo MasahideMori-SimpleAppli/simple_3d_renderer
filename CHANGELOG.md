@@ -1,3 +1,7 @@
+## 11.0.0
+
+* Sp3dCamera now supports EnumSp3dDrawMode.rect.
+
 ## 10.0.0
 
 * Added ability to layer drawings. By enabling useLayer in Sp3dWorld, Sp3dRenderer will tuning the

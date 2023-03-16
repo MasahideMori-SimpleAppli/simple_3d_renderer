@@ -12,7 +12,8 @@ import 'sp3d_v2d.dart';
 ///
 class Sp3dCamera {
   String get className => 'Sp3dCamera';
-  String get version => '9';
+
+  String get version => '10';
   Sp3dV3D position;
   double focusLength;
   late Sp3dV3D rotateAxis;
@@ -125,22 +126,57 @@ class Sp3dCamera {
     List<Sp3dFaceObj> r = [];
     for (Sp3dObj obj in objs) {
       final List<Sp3dV2D> conv2d = convert(obj, origin);
-      for (Sp3dFragment i in obj.fragments) {
-        for (Sp3dFace j in i.faces) {
-          final List<Sp3dV3D> v = j.getVertices(obj);
-          final Sp3dV3D n = Sp3dV3D.surfaceNormal(v).nor();
-          final Sp3dV3D c = Sp3dV3D.ave(v);
-          // ここでは回転後の値を使う。
-          final Sp3dV3D d = (c - rotatedPosition).nor();
-          final double camTheta = Sp3dV3D.dot(n, d);
-          if (isAllDrawn) {
-            r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, camTheta,
-                Sp3dV3D.dist(c, rotatedPosition)));
-          } else {
-            // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
-            if (camTheta >= 0) {
-              r.add(Sp3dFaceObj(obj, i, j, v, _get2dV(j, conv2d), n, camTheta,
-                  Sp3dV3D.dist(c, rotatedPosition)));
+      if (obj.drawMode == EnumSp3dDrawMode.rect) {
+        // 長方形に近似した結果をFaceとして返す。
+        double minX = double.maxFinite;
+        double minY = double.maxFinite;
+        double maxX = double.minPositive;
+        double maxY = double.minPositive;
+        for (final i in conv2d) {
+          if (minX > i.x) {
+            minX = i.x;
+          }
+          if (minY > i.y) {
+            minY = i.y;
+          }
+          if (maxX < i.x) {
+            maxX = i.x;
+          }
+          if (maxY < i.y) {
+            maxY = i.y;
+          }
+        }
+        r.add(Sp3dFaceObj(
+            obj,
+            obj.fragments[0],
+            obj.fragments[0].faces[0],
+            obj.vertices,
+            [
+              Sp3dV2D(minX, minY),
+              Sp3dV2D(minX, maxY),
+              Sp3dV2D(maxX, maxY),
+              Sp3dV2D(maxX, minY)
+            ],
+            Sp3dV3D(1, 1, 1),
+            1,
+            100));
+      } else {
+        for (Sp3dFragment i in obj.fragments) {
+          for (Sp3dFace j in i.faces) {
+            final List<Sp3dV3D> v = j.getVertices(obj);
+            final Sp3dV3D n = Sp3dV3D.surfaceNormal(v).nor();
+            final Sp3dV3D c = Sp3dV3D.ave(v);
+            // ここでは回転後の値を使う。
+            final double camTheta = Sp3dV3D.dot(n, (c - rotatedPosition).nor());
+            final List<Sp3dV2D> v2dl = _get2dV(j, conv2d);
+            final double dist = Sp3dV3D.dist(c, rotatedPosition);
+            if (isAllDrawn) {
+              r.add(Sp3dFaceObj(obj, i, j, v, v2dl, n, camTheta, dist));
+            } else {
+              // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
+              if (camTheta >= 0) {
+                r.add(Sp3dFaceObj(obj, i, j, v, v2dl, n, camTheta, dist));
+              }
             }
           }
         }
