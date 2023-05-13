@@ -1,3 +1,6 @@
+## 12.0.0
+* Supported Dart 3.
+
 ## 11.0.0
 
 * Sp3dCamera now supports EnumSp3dDrawMode.rect.
