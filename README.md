@@ -104,10 +104,10 @@ For example, rewrite sample code as follows.(*Note that some unnecessary paramet
 ![sample_image.png](https://raw.githubusercontent.com/MasahideMori1111/simple_3d_images/main/Sp3dRenderer/sample_image.png)
 
 ```dart
-  // Chenge Cube of initState().
+  // Change Cube of initState().
   Sp3dObj obj = UtilSp3dGeometry.cube(200,200,200,1,1,1);
   --------------------------------------------------------------------
-  // Chenge function
+  // Change function
   void loadImage() async {
     this.objs[0].fragments[0].faces[0].materialIndex=1;
     this.objs[0].fragments[0].faces[1].materialIndex=1;

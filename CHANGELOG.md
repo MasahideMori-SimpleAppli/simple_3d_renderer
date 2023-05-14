@@ -1,3 +1,6 @@
+## 12.0.1
+* Updated package description.
+
 ## 12.0.0
 * Supported Dart 3.
 
