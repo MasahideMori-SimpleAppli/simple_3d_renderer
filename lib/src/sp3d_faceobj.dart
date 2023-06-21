@@ -15,8 +15,12 @@ class Sp3dFaceObj {
   final Sp3dObj obj;
   // This face parent.
   final Sp3dFragment parent;
+  // The index of the parent in the obj fragments list.
+  final int parentIndex;
   // This face obj.
   final Sp3dFace face;
+  // The index of the face in the fragment faces list.
+  final int faceIndex;
   // Face vertices in the world.
   final List<Sp3dV3D> vertices3d;
   // Face vertices on display.
@@ -28,6 +32,16 @@ class Sp3dFaceObj {
   // Distance between the average position of this surface and the camera.
   final double dist;
 
-  Sp3dFaceObj(this.obj, this.parent, this.face, this.vertices3d,
-      this.vertices2d, this.nsn, this.camTheta, this.dist);
+  Sp3dFaceObj(
+    this.obj,
+    this.parent,
+    this.parentIndex,
+    this.face,
+    this.faceIndex,
+    this.vertices3d,
+    this.vertices2d,
+    this.nsn,
+    this.camTheta,
+    this.dist,
+  );
 }

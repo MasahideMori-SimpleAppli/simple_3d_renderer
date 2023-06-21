@@ -149,7 +149,9 @@ class Sp3dCamera {
         r.add(Sp3dFaceObj(
             obj,
             obj.fragments[0],
+            0,
             obj.fragments[0].faces[0],
+            0,
             obj.vertices,
             [
               Sp3dV2D(minX, minY),
@@ -161,21 +163,25 @@ class Sp3dCamera {
             1,
             100));
       } else {
-        for (Sp3dFragment i in obj.fragments) {
-          for (Sp3dFace j in i.faces) {
-            final List<Sp3dV3D> v = j.getVertices(obj);
+        for (var i = 0; i < obj.fragments.length; i++) {
+          final Sp3dFragment fragment = obj.fragments[i];
+          for (var j = 0; j < fragment.faces.length; j++) {
+            final Sp3dFace face = fragment.faces[j];
+            final List<Sp3dV3D> v = face.getVertices(obj);
             final Sp3dV3D n = Sp3dV3D.surfaceNormal(v).nor();
             final Sp3dV3D c = Sp3dV3D.ave(v);
             // ここでは回転後の値を使う。
             final double camTheta = Sp3dV3D.dot(n, (c - rotatedPosition).nor());
-            final List<Sp3dV2D> v2dl = _get2dV(j, conv2d);
+            final List<Sp3dV2D> v2dl = _get2dV(face, conv2d);
             final double dist = Sp3dV3D.dist(c, rotatedPosition);
             if (isAllDrawn) {
-              r.add(Sp3dFaceObj(obj, i, j, v, v2dl, n, camTheta, dist));
+              r.add(Sp3dFaceObj(
+                  obj, fragment, i, face, j, v, v2dl, n, camTheta, dist));
             } else {
               // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
               if (camTheta >= 0) {
-                r.add(Sp3dFaceObj(obj, i, j, v, v2dl, n, camTheta, dist));
+                r.add(Sp3dFaceObj(
+                    obj, fragment, i, face, j, v, v2dl, n, camTheta, dist));
               }
             }
           }
