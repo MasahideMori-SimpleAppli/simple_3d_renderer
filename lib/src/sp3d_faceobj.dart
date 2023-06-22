@@ -13,6 +13,8 @@ import 'sp3d_v2d.dart';
 class Sp3dFaceObj {
   // The object to which this face belongs.
   final Sp3dObj obj;
+  // The object index in the list.
+  final int objIndex;
   // This face parent.
   final Sp3dFragment parent;
   // The index of the parent in the obj fragments list.
@@ -34,6 +36,7 @@ class Sp3dFaceObj {
 
   Sp3dFaceObj(
     this.obj,
+    this.objIndex,
     this.parent,
     this.parentIndex,
     this.face,

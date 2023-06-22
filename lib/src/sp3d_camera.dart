@@ -124,7 +124,8 @@ class Sp3dCamera {
   /// Returns calculated data.
   List<Sp3dFaceObj> getPrams(List<Sp3dObj> objs, Sp3dV2D origin) {
     List<Sp3dFaceObj> r = [];
-    for (Sp3dObj obj in objs) {
+    for (var i = 0; i < objs.length; i++) {
+      final Sp3dObj obj = objs[i];
       final List<Sp3dV2D> conv2d = convert(obj, origin);
       if (obj.drawMode == EnumSp3dDrawMode.rect) {
         // 長方形に近似した結果をFaceとして返す。
@@ -148,6 +149,7 @@ class Sp3dCamera {
         }
         r.add(Sp3dFaceObj(
             obj,
+            i,
             obj.fragments[0],
             0,
             obj.fragments[0].faces[0],
@@ -163,10 +165,10 @@ class Sp3dCamera {
             1,
             100));
       } else {
-        for (var i = 0; i < obj.fragments.length; i++) {
-          final Sp3dFragment fragment = obj.fragments[i];
-          for (var j = 0; j < fragment.faces.length; j++) {
-            final Sp3dFace face = fragment.faces[j];
+        for (var j = 0; j < obj.fragments.length; j++) {
+          final Sp3dFragment fragment = obj.fragments[j];
+          for (var k = 0; k < fragment.faces.length; k++) {
+            final Sp3dFace face = fragment.faces[k];
             final List<Sp3dV3D> v = face.getVertices(obj);
             final Sp3dV3D n = Sp3dV3D.surfaceNormal(v).nor();
             final Sp3dV3D c = Sp3dV3D.ave(v);
@@ -176,12 +178,12 @@ class Sp3dCamera {
             final double dist = Sp3dV3D.dist(c, rotatedPosition);
             if (isAllDrawn) {
               r.add(Sp3dFaceObj(
-                  obj, fragment, i, face, j, v, v2dl, n, camTheta, dist));
+                  obj, i, fragment, j, face, k, v, v2dl, n, camTheta, dist));
             } else {
               // cosΘがマイナスなら、カメラの向きと面の向きが同じなので描画対象外
               if (camTheta >= 0) {
                 r.add(Sp3dFaceObj(
-                    obj, fragment, i, face, j, v, v2dl, n, camTheta, dist));
+                    obj, i, fragment, j, face, k, v, v2dl, n, camTheta, dist));
               }
             }
           }
