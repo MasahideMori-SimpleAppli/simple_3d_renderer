@@ -217,26 +217,19 @@ onPanDownの戻り値（Sp3dFaceObj）は、タッチされたサーフェスに
 このパッケージは私が個人で開発していますが、会社経由でサポートできる場合があります。  
 [合同会社シンプルアプリ](https://simpleappli.com/index.html)  
 
-## レンダリングの速度 (20回の描画の平均値)
-CPU 3.40Ghz, 16GB memoryのミッドレンジのマシン上で、debug modeかつWebブラウザ上での描画にかかる時間の考察です。  
+## レンダリングの速度 (300回の描画の平均値)
+CPU Ryzen5 5600を用いた時、debug modeかつWebブラウザ上での描画にかかる時間の考察です。  
 CPUで動作すること、シングルスレッド処理であることなど、速度の上でいくつかの課題があります。  
-リアルタイムレンダリングの場合、体感的には1000 cube (8000 vertices)ぐらいが限界で、それ以上だと重いです。  
-多くの頂点を持つ球などのモデルの場合、快適に操作出来る量はもっと少なくなります。  
+リアルタイムレンダリングの場合、体感的には1000 cube (8000 vertices)ぐらいが限界で、それ以上だと重いと思います。  
 注意：高速化ロジックの影響があるため、どんなオブジェクトでも同様なパフォーマンスになるわけではありません。  
+例えば多くの頂点を持つ球などのモデルの場合、快適に操作出来る量はもっと少なくなります。  
 ```dart
 /// use cube obj(8 vertices / 1 obj)
-Sp3dObj obj = UtilSp3dGeometry.cube(5, 5, 5, 1, 1, 1);
+Sp3dObj obj = UtilSp3dGeometry.cube(2, 2, 2, 1, 1, 1);
 ```
-- 100 cube 4.7 ms / paint. (800 vertices, 212.8 fps)
-- 500 cube 23.8 ms / paint.
-- 1000 cube 47.7 ms / paint. (8000 vertices, 21.0 fps)
-```dart
-/// use sphere obj(72 vertices / 1 obj)
-Sp3dObj obj = UtilSp3dGeometry.sphere(2.5);
-```
-- 100 sphere 60.0 ms / paint. (7200 vertices, 16.6 fps)
-- 500 sphere 307.6 ms / paint.
-- 1000 sphere 619.4 ms / paint. (72000 vertices, 1.6 fps)
+- 100 cube : 338.6 fps (800 vertices)
+- 1000 cube : 34.1 fps
+- 2500 cube : 13.6 fps
 
 ## バージョン管理について
 それぞれ、Cの部分が変更されます。  

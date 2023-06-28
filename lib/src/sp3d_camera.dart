@@ -133,18 +133,18 @@ class Sp3dCamera {
         double minY = double.maxFinite;
         double maxX = double.minPositive;
         double maxY = double.minPositive;
-        for (final i in conv2d) {
-          if (minX > i.x) {
-            minX = i.x;
+        for (final j in conv2d) {
+          if (minX > j.x) {
+            minX = j.x;
           }
-          if (minY > i.y) {
-            minY = i.y;
+          if (minY > j.y) {
+            minY = j.y;
           }
-          if (maxX < i.x) {
-            maxX = i.x;
+          if (maxX < j.x) {
+            maxX = j.x;
           }
-          if (maxY < i.y) {
-            maxY = i.y;
+          if (maxY < j.y) {
+            maxY = j.y;
           }
         }
         r.add(Sp3dFaceObj(

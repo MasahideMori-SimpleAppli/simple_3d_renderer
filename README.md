@@ -219,27 +219,19 @@ If you need paid support for any reason, please contact my company.
 This package is developed by me personally, but may be supported via the company.  
 [SimpleAppli Inc.](https://simpleappli.com/en/index_en.html)
 
-## Rendering Speed (20 paint average)
-This is a consideration of the time it takes to draw on a web browser 
-in debug mode on a mid-range machine with a CPU of 3.40Ghz and 16GB memory.  
-There are some speed issues, such as running on a CPU and being single-threaded.  
-In the case of real-time rendering, the limit is about 1000 cubes (8000 vertices), and anything over that is heavy.  
-For models such as spheres with many vertices, the amount you can comfortably manipulate is much less.  
-Note: Not all objects will have similar performance due to the impact of speedup logic.  
+## Rendering Speed (300 paint average)
+When using CPU Ryzen5 5600, it is a consideration of the time it takes to draw in debug mode and on a web browser.
+There are some speed issues, such as running on a CPU and being single-threaded.
+In the case of real-time rendering, the limit is about 1000 cubes (8000 vertices), and anything higher than that is heavy.  
+Note: Not all objects will perform equally well due to acceleration logic.
+For models such as spheres with many vertices, the amount you can comfortably manipulate is much smaller.
 ```dart
 /// use cube obj(8 vertices / 1 obj)
-Sp3dObj obj = UtilSp3dGeometry.cube(5, 5, 5, 1, 1, 1);
+Sp3dObj obj = UtilSp3dGeometry.cube(2, 2, 2, 1, 1, 1);
 ```
-- 100 cube 4.7 ms / paint. (800 vertices, 212.8 fps)
-- 500 cube 23.8 ms / paint.
-- 1000 cube 47.7 ms / paint. (8000 vertices, 21.0 fps)
-```dart
-/// use sphere obj(72 vertices / 1 obj)
-Sp3dObj obj = UtilSp3dGeometry.sphere(2.5);
-```
-- 100 sphere 60.0 ms / paint. (7200 vertices, 16.6 fps)
-- 500 sphere 307.6 ms / paint.
-- 1000 sphere 619.4 ms / paint. (72000 vertices, 1.6 fps)
+- 100 cube : 338.6 fps (800 vertices)
+- 1000 cube : 34.1 fps
+- 2500 cube : 13.6 fps
 
 ## About version control
 The C part will be changed at the time of version upgrade.  

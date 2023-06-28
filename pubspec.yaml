@@ -1,6 +1,6 @@
 name: simple_3d_renderer
 description: Sp3dObj renderer. Includes simple cameras, lights, worlds, and more.
-version: 12.0.1
+version: 15.0.0
 repository: https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer
 
 environment:
