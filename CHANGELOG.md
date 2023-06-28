@@ -1,6 +1,7 @@
 ## 15.0.0
 * Updated about [PR 7](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/pull/7).
 * Other minor changes.
+* This version number is deliberately manipulated to skip some disliked numbers.
 
 ## 12.0.1
 * Updated package description.
