@@ -23,7 +23,7 @@ import 'sp3d_camera_zoom_controller.dart';
 class Sp3dRenderer extends StatefulWidget {
   String get className => 'Sp3dRenderer';
 
-  String get version => '13';
+  String get version => '14';
   final Size size;
   final Sp3dV2D worldOrigin;
   final Sp3dWorld world;
@@ -140,6 +140,9 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
   void _panDownAction(Sp3dGestureDetails d, bool isFirstPanDown) {
     if (widget.checkTouchObj) {
       for (Sp3dFaceObj i in widget.world.sortedAllFaces.reversed) {
+        if (!i.parent.isTouchable) {
+          continue;
+        }
         _p.reset();
         if (i.vertices2d.length == 3) {
           _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);

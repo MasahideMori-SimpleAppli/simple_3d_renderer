@@ -1,3 +1,7 @@
+## 16.0.0
+* Updates associated with base library updates.
+* Added support for isTouchable parameter in Sp3dFragment to Sp3dRenderer.
+
 ## 15.0.0
 * Updated about [PR 7](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/pull/7).
 * Other minor changes.
