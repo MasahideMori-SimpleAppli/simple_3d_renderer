@@ -1,3 +1,8 @@
+## 16.4.0
+
+* Updates associated with base library updates.
+* Added rotated method to Sp3dV2D class.
+
 ## 16.3.0
 
 * Updates associated with base library updates.

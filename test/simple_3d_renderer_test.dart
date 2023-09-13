@@ -28,4 +28,40 @@ void main() {
       );
     });
   });
+
+  test('Sp3dV2D rotated', () {
+    Sp3dV2D origin = Sp3dV2D(1, 0);
+    Sp3dV2D p = Sp3dV2D(2, 0);
+    expect(
+        p
+            .rotated(origin, 90 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(1, 1), 0.01),
+        true);
+    expect(
+        p
+            .rotated(origin, -90 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(1, -1), 0.01),
+        true);
+    expect(
+        p
+            .rotated(origin, 180 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(0, 0), 0.01),
+        true);
+    expect(
+        p
+            .rotated(origin, -180 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(0, 0), 0.01),
+        true);
+    p = Sp3dV2D(1, 1);
+    expect(
+        p
+            .rotated(origin, 90 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(0, 0), 0.01),
+        true);
+    expect(
+        p
+            .rotated(origin, -90 * Sp3dConstantValues.toRadian)
+            .equals(Sp3dV2D(2, 0), 0.01),
+        true);
+  });
 }
