@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 ///
 @immutable
 class Sp3dV2D {
-  final String className = 'Sp3dV2D';
-  final String version = '6';
+  static const String className = 'Sp3dV2D';
+  static const String version = '7';
   final double x;
   final double y;
 

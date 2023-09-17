@@ -13,9 +13,9 @@ import 'sp3d_paint_image.dart';
 /// First edition creation date 2021-09-30 14:58:34
 ///
 class Sp3dWorld {
-  String get className => 'Sp3dWorld';
+  static const String className = 'Sp3dWorld';
+  static const String version = '9';
 
-  String get version => '8';
   List<Sp3dObj> objs;
   final bool useLayer;
 

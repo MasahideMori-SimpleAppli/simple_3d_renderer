@@ -52,7 +52,7 @@ class Sp3dPaintImage {
   // 色情報と頂点のインデックス。
   static const List<int> _indices = [0, 1, 2, 3, 4, 5];
 
-  Paint p = Paint();
+  final Paint p = Paint();
 
   /// Constructor
   Sp3dPaintImage(this.material);

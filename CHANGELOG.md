@@ -1,3 +1,9 @@
+## 17.0.0
+
+* Updates associated with base library updates.
+* Some variables changed to static const from final.
+* Other minor fixes.
+
 ## 16.4.0
 
 * Updates associated with base library updates.

@@ -1,6 +1,6 @@
 import 'package:simple_3d/simple_3d.dart';
-import 'dart:math';
 import '../simple_3d_renderer.dart';
+import 'package:util_simple_3d/util_simple_3d.dart';
 
 ///
 /// (en)Class for adjusting camera rotation.
@@ -14,11 +14,8 @@ import '../simple_3d_renderer.dart';
 /// First edition creation date 2023-01-02 11:41:05
 ///
 class Sp3dCameraRotationController {
-  static const double _toRadian = pi / 180;
-
-  String get className => 'Sp3dCameraRotationController';
-
-  String get version => '1';
+  static const String className = 'Sp3dCameraRotationController';
+  static const String version = '2';
 
   // 回転速度
   double rotationSpeed;
@@ -112,7 +109,7 @@ class Sp3dCameraRotationController {
     }
     // 回転軸。xとyを反転させる必要がある。
     axis = Sp3dV3D(diff.y, diff.x, 0).nor();
-    camera.rotate(axis, angle * _toRadian);
+    camera.rotate(axis, angle * Sp3dConstantValues.toRadian);
   }
 
   /// run onPanCancel or onPanEnd.

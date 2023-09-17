@@ -16,11 +16,8 @@ import 'sp3d_v2d.dart';
 /// First edition creation date 2022-12-18 17:13:37
 ///
 class Sp3dOrthographicCamera extends Sp3dCamera {
-  @override
-  String get className => 'Sp3dOrthographicCamera';
-
-  @override
-  String get version => '2';
+  static const String className = 'Sp3dOrthographicCamera';
+  static const String version = '3';
 
   /// Constructor
   /// * [position] : Camera position in the world.
@@ -42,6 +39,20 @@ class Sp3dOrthographicCamera extends Sp3dCamera {
           origin.x + (v.x - position.x), origin.y + (position.y - v.y)));
     }
     return r;
+  }
+
+  /// Used to save state.
+  @override
+  Map<String, dynamic> toDict() {
+    Map<String, dynamic> d = {};
+    d['class_name'] = className;
+    d['version'] = version;
+    d['position'] = position.toDict();
+    d['focus_length'] = focusLength;
+    d['rotate_axis'] = rotateAxis.toDict();
+    d['radian'] = radian;
+    d['is_all_drawn'] = isAllDrawn;
+    return d;
   }
 
   /// Used to restore state.
