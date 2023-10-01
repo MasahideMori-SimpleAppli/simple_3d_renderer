@@ -14,10 +14,13 @@ import 'sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   static const String className = 'Sp3dWorld';
-  static const String version = '9';
+  static const String version = '10';
 
   List<Sp3dObj> objs;
   final bool useLayer;
+
+  // 画像の透過部分の取り扱い
+  bool imageBGisBlack;
 
   // 以下はディープコピーなどが不要な一時変数。
   // コンバートされた各オブジェクトごとの画像情報
@@ -33,9 +36,12 @@ class Sp3dWorld {
 
   /// Constructor
   /// * [objs] : World obj.
-  /// * [useLayer] : If true, The drawing order is forced by the layer number from the smallest.
-  /// Call initLayer to activate it.
-  Sp3dWorld(this.objs, {this.useLayer = false});
+  /// * [useLayer] : If true, The drawing order is forced by the layer number
+  /// from the smallest. Call initLayer to activate it.
+  /// * [imageBGisBlack] : This specifies the filling of transparent parts
+  /// of the image data. If false, transparent mode is enabled.
+  /// Set to true only if compatibility with previous versions is required.
+  Sp3dWorld(this.objs, {this.useLayer = false, this.imageBGisBlack = false});
 
   /// Deep copy the world.
   /// Initialization must be performed again.
@@ -59,6 +65,7 @@ class Sp3dWorld {
     }
     d['objs'] = mObjs;
     d['use_layer'] = useLayer;
+    d['image_bg_is_black'] = imageBGisBlack;
     return d;
   }
 
@@ -68,8 +75,14 @@ class Sp3dWorld {
     for (Map<String, dynamic> i in src['objs']) {
       mObjs.add(Sp3dObj.fromDict(i));
     }
+    // 古いバージョンの保存データは互換モードで、復元する。
+    bool bgFlag = true;
+    if (src.containsKey('image_bg_is_black')) {
+      bgFlag = src['image_bg_is_black'];
+    }
     return Sp3dWorld(mObjs,
-        useLayer: src.containsKey('use_layer') ? src['use_layer'] : false);
+        useLayer: src.containsKey('use_layer') ? src['use_layer'] : false,
+        imageBGisBlack: bgFlag);
   }
 
   /// (en)Converts Uint8List to an image class and returns it.
@@ -84,7 +97,8 @@ class Sp3dWorld {
   /// (en)Loads and initializes the image file for rendering.
   ///
   /// (ja)レンダリング用の画像ファイルを読み込んで初期化します。
-  /// Return : If an error occurs, it returns a list of the objects in which the error occurred.
+  /// Return : If an error occurs, it returns a list of the objects
+  /// in which the error occurred.
   /// If normal, an empty array is returned.
   Future<List<Sp3dObj>> initImages() async {
     Map<Sp3dObj, bool> r = {};
@@ -98,7 +112,7 @@ class Sp3dWorld {
             } else {
               convertedImages[obj] = {m.imageIndex!: img};
             }
-            Sp3dPaintImage pImg = Sp3dPaintImage(m);
+            Sp3dPaintImage pImg = Sp3dPaintImage(m, imageBGisBlack);
             pImg.createShader(img);
             paintImages[m] = pImg;
           }

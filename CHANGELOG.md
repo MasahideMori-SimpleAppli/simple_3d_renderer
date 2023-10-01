@@ -1,3 +1,8 @@
+## 18.0.0
+
+* Transparent backgrounds are now available when setting image files to objects. It can be switched from Sp3dWorld's imageBGisBlack flag.
+* Improved object touch detection.
+
 ## 17.0.0
 
 * Updates associated with base library updates.

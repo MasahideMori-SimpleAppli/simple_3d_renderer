@@ -22,7 +22,7 @@ import 'sp3d_camera_zoom_controller.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   static const String className = 'Sp3dRenderer';
-  static const String version = '15';
+  static const String version = '16';
 
   final Size size;
   final Sp3dV2D worldOrigin;
@@ -160,9 +160,9 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         } else {
           _p.moveTo(i.vertices2d[0].x, i.vertices2d[0].y);
-          _p.lineTo(i.vertices2d[1].x, i.vertices2d[1].y);
-          _p.lineTo(i.vertices2d[2].x, i.vertices2d[2].y);
-          _p.lineTo(i.vertices2d[3].x, i.vertices2d[3].y);
+          for (int j = 1; j < i.vertices2d.length; j++) {
+            _p.lineTo(i.vertices2d[j].x, i.vertices2d[j].y);
+          }
           _p.close();
           if (_p.contains(d.toOffset())) {
             if (isFirstPanDown) {

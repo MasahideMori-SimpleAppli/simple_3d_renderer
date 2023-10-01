@@ -39,8 +39,10 @@ class Sp3dPaintImage {
   // 画像の切り出し位置指定
   late List<Offset> textureCoordinates;
 
-  // 色情報。画像の場合は全て黒。
-  static const List<Color> _colors = [
+  // 画像の背景の色情報。透過部分を何色で塗りつぶすかの指定。
+  late final List<Color> _colors;
+
+  static const List<Color> _bgBlack = [
     Color.fromARGB(255, 0, 0, 0),
     Color.fromARGB(255, 0, 0, 0),
     Color.fromARGB(255, 0, 0, 0),
@@ -49,13 +51,28 @@ class Sp3dPaintImage {
     Color.fromARGB(255, 0, 0, 0),
   ];
 
+  static const List<Color> _bgTP = [
+    Color.fromARGB(0, 0, 0, 0),
+    Color.fromARGB(0, 0, 0, 0),
+    Color.fromARGB(0, 0, 0, 0),
+    Color.fromARGB(0, 0, 0, 0),
+    Color.fromARGB(0, 0, 0, 0),
+    Color.fromARGB(0, 0, 0, 0),
+  ];
+
   // 色情報と頂点のインデックス。
   static const List<int> _indices = [0, 1, 2, 3, 4, 5];
 
   final Paint p = Paint();
 
   /// Constructor
-  Sp3dPaintImage(this.material);
+  /// * [material] : Sp3dMaterial object.
+  /// * [imageBGisBlack] : This specifies the filling of transparent parts
+  /// of the image data. If false, transparent mode is enabled.
+  /// Set to true only if compatibility with previous versions is required.
+  Sp3dPaintImage(this.material, bool imageBGisBlack) {
+    _colors = imageBGisBlack ? _bgBlack : _bgTP;
+  }
 
   /// (en)Load the image and create a shader inside.
   ///
