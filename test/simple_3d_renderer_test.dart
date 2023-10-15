@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_3d/simple_3d.dart';
@@ -63,5 +65,30 @@ void main() {
             .rotated(origin, -90 * Sp3dConstantValues.toRadian)
             .equals(Sp3dV2D(2, 0), 0.01),
         true);
+  });
+
+  test('Sp3dV2D direction', () {
+    Sp3dV2D p1 = Sp3dV2D(1, 0);
+    Sp3dV2D p2 = Sp3dV2D(1, 1);
+    Offset p1o = Offset(1, 0);
+    Offset p2o = Offset(1, 1);
+    expect(p1.direction() == p1o.direction, true);
+    expect(p2.direction() == p2o.direction, true);
+  });
+
+  test('Sp3dV2D angleTo', () {
+    Sp3dV2D p1 = Sp3dV2D(1, 0);
+    Sp3dV2D p2 = Sp3dV2D(1, 1);
+    Sp3dV2D p3 = Sp3dV2D(0, 1);
+    expect(p1.angleTo(p2) * 180 / pi == 45, true);
+    expect(p1.angleTo(p3) * 180 / pi == 90, true);
+  });
+
+  test('Sp3dV2D distanceTo', () {
+    Sp3dV2D origin = Sp3dV2D(0, 0);
+    Sp3dV2D p1 = Sp3dV2D(1, 0);
+    Sp3dV2D p2 = Sp3dV2D(0, 5);
+    expect(origin.distanceTo(p1) == 1, true);
+    expect(origin.distanceTo(p2) == 5, true);
   });
 }

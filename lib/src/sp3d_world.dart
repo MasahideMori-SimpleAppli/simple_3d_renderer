@@ -14,7 +14,7 @@ import 'sp3d_paint_image.dart';
 ///
 class Sp3dWorld {
   static const String className = 'Sp3dWorld';
-  static const String version = '10';
+  static const String version = '11';
 
   List<Sp3dObj> objs;
   final bool useLayer;
@@ -27,7 +27,7 @@ class Sp3dWorld {
   Map<Sp3dObj, Map<int, Image>> convertedImages = {};
 
   // レンダリング情報を構成するためのイメージのMap。構成に失敗したイメージはnullが入る。
-  Map<Sp3dMaterial, Sp3dPaintImage?> paintImages = {};
+  Map<Sp3dObj, Map<int, Sp3dPaintImage?>> paintImages = {};
 
   // 以下は一次データであるため保存されない。
   // タッチ制御のために保存されるレンダリング座標情報。汎用性のために外部からも参照可能にする。
@@ -75,7 +75,7 @@ class Sp3dWorld {
     for (Map<String, dynamic> i in src['objs']) {
       mObjs.add(Sp3dObj.fromDict(i));
     }
-    // 古いバージョンの保存データは互換モードで、復元する。
+    // 古いバージョンの保存データは互換モードで復元する。
     bool bgFlag = true;
     if (src.containsKey('image_bg_is_black')) {
       bgFlag = src['image_bg_is_black'];
@@ -114,10 +114,18 @@ class Sp3dWorld {
             }
             Sp3dPaintImage pImg = Sp3dPaintImage(m, imageBGisBlack);
             pImg.createShader(img);
-            paintImages[m] = pImg;
+            if (paintImages.containsKey(obj)) {
+              paintImages[obj]![m.imageIndex!] = pImg;
+            } else {
+              paintImages[obj] = {m.imageIndex!: pImg};
+            }
           }
         } catch (e) {
-          paintImages[m] = null;
+          if (paintImages.containsKey(obj)) {
+            paintImages[obj]![m.imageIndex!] = null;
+          } else {
+            paintImages[obj] = {m.imageIndex!: null};
+          }
           r[obj] = false;
         }
       }

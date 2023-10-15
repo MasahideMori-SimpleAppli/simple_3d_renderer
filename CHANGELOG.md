@@ -1,3 +1,11 @@
+## 18.1.0
+
+* Fixed a bug where image references would be broken when the rendering target contained multiple objects including images.
+* Added angleTo method to Sp3dV2D.
+* Added direction method to Sp3dV2D.
+* Added toOffset method to Sp3dV2D.
+* Added distanceTo method to Sp3dV2D.
+
 ## 18.0.0
 
 * Transparent backgrounds are now available when setting image files to objects. It can be switched from Sp3dWorld's imageBGisBlack flag.

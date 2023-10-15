@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 @immutable
 class Sp3dV2D {
   static const String className = 'Sp3dV2D';
-  static const String version = '7';
+  static const String version = '8';
   final double x;
   final double y;
 
@@ -106,6 +106,49 @@ class Sp3dV2D {
     final double r = diff.len();
     final double theta = atan2(diff.y, diff.x) + radian;
     return Sp3dV2D(origin.x + r * cos(theta), origin.y + r * sin(theta));
+  }
+
+  /// (en)Returns the clockwise angle of this vector.
+  /// The unit of the return value is radians.
+  ///
+  /// (ja)このベクトルの時計回りの角度を返します。
+  /// 戻り値の単位はラジアンです。
+  double direction() {
+    return atan2(y, x);
+  }
+
+  /// (en)Computes and returns the angle between this vector
+  /// and the specified vector.
+  /// The unit of the return value is radians.
+  ///
+  /// (ja)このベクトルと指定ベクトルとの間の角度を計算して返します。
+  /// 戻り値の単位はラジアンです。
+  ///
+  /// * [other] : other vector.
+  /// * [origin] : the origin.
+  double angleTo(Sp3dV2D other, {Sp3dV2D origin = const Sp3dV2D(0, 0)}) {
+    double v1 = (x - origin.x) * (other.y - origin.y) -
+        (y - origin.y) * (other.x - origin.x);
+    double v2 = (x - origin.x) * (other.x - origin.x) +
+        (y - origin.y) * (other.y - origin.y);
+    return atan2(v1, v2);
+  }
+
+  /// (en)Converts this vector to an offset and returns it.
+  ///
+  /// (ja)このベクトルをオフセットに変換して返します。
+  Offset toOffset() {
+    return Offset(x, y);
+  }
+
+  /// (en)Computes and returns the Euclidean distance between
+  /// this vector and the specified vector.
+  ///
+  /// (ja)このベクトルと指定ベクトルとの間のユークリッド距離を計算して返します。
+  ///
+  /// * [other] : other vector.
+  double distanceTo(Sp3dV2D other) {
+    return (other - this).len();
   }
 
   Sp3dV2D operator +(Sp3dV2D v) {

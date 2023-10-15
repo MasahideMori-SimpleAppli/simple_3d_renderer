@@ -22,7 +22,7 @@ import 'sp3d_camera_zoom_controller.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   static const String className = 'Sp3dRenderer';
-  static const String version = '16';
+  static const String version = '17';
 
   final Size size;
   final Sp3dV2D worldOrigin;
@@ -339,12 +339,16 @@ class _Sp3dCanvasPainter extends CustomPainter {
         final List<Color> colors = w.light.apply(fo.nsn, fo.camTheta, material);
         if (material.isFill) {
           if (material.imageIndex != null) {
-            if (w.world.paintImages.containsKey(material)) {
-              if (w.world.paintImages[material] != null) {
+            if (w.world.paintImages[fo.obj]!
+                .containsKey(fo.face.materialIndex!)) {
+              if (w.world.paintImages[fo.obj]![fo.face.materialIndex!] !=
+                  null) {
                 canvas.drawVertices(
-                    w.world.paintImages[material]!.updateVertices(fo),
+                    w.world.paintImages[fo.obj]![fo.face.materialIndex!]!
+                        .updateVertices(fo),
                     BlendMode.srcOver,
-                    w.world.paintImages[material]!.getPaint());
+                    w.world.paintImages[fo.obj]![fo.face.materialIndex!]!
+                        .getPaint());
               }
             }
           } else {
