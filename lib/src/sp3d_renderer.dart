@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
-import 'sp3d_camera_rotation_controller.dart';
-import 'sp3d_faceobj.dart';
-import 'sp3d_gesture_detector.dart';
-import 'sp3d_light.dart';
-import 'sp3d_world.dart';
-import 'sp3d_camera.dart';
-import 'sp3d_v2d.dart';
-import 'sp3d_camera_zoom_controller.dart';
+import '../simple_3d_renderer.dart';
 
 ///
 /// (en)A widget for rendering Sp3dWorld.
@@ -22,7 +15,7 @@ import 'sp3d_camera_zoom_controller.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   static const String className = 'Sp3dRenderer';
-  static const String version = '17';
+  static const String version = '18';
 
   final Size size;
   final Sp3dV2D worldOrigin;
@@ -339,16 +332,16 @@ class _Sp3dCanvasPainter extends CustomPainter {
         final List<Color> colors = w.light.apply(fo.nsn, fo.camTheta, material);
         if (material.isFill) {
           if (material.imageIndex != null) {
-            if (w.world.paintImages[fo.obj]!
-                .containsKey(fo.face.materialIndex!)) {
-              if (w.world.paintImages[fo.obj]![fo.face.materialIndex!] !=
-                  null) {
-                canvas.drawVertices(
-                    w.world.paintImages[fo.obj]![fo.face.materialIndex!]!
-                        .updateVertices(fo),
-                    BlendMode.srcOver,
-                    w.world.paintImages[fo.obj]![fo.face.materialIndex!]!
-                        .getPaint());
+            if (w.world.paintImages.containsKey(fo.obj)) {
+              final Map<int, Sp3dPaintImage?> paintImages =
+                  w.world.paintImages[fo.obj]!;
+              if (paintImages.containsKey(material.imageIndex!)) {
+                if (paintImages[material.imageIndex!] != null) {
+                  final Sp3dPaintImage paintImage =
+                      paintImages[material.imageIndex!]!;
+                  canvas.drawVertices(paintImage.updateVertices(fo),
+                      BlendMode.srcOver, paintImage.getPaint());
+                }
               }
             }
           } else {

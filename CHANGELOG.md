@@ -1,3 +1,7 @@
+## 18.1.1
+
+* Fixed a bug where image references were broken.
+
 ## 18.1.0
 
 * Fixed a bug where image references would be broken when the rendering target contained multiple objects including images.
