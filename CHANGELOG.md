@@ -1,3 +1,7 @@
+## 18.2.0
+
+* Added fromOffset method to Sp3dV2D.
+
 ## 18.1.1
 
 * Fixed a bug where image references were broken.

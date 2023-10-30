@@ -141,6 +141,13 @@ class Sp3dV2D {
     return Offset(x, y);
   }
 
+  /// (en)Convert from offset to vector.
+  ///
+  /// (ja)オフセットからベクトルに変換します。
+  static Sp3dV2D fromOffset(Offset offset) {
+    return Sp3dV2D(offset.dx, offset.dy);
+  }
+
   /// (en)Computes and returns the Euclidean distance between
   /// this vector and the specified vector.
   ///
