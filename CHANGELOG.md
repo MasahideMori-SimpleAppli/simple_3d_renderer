@@ -1,3 +1,7 @@
+## 18.2.1
+
+* Updates associated with base library updates.
+
 ## 18.2.0
 
 * Added fromOffset method to Sp3dV2D.
