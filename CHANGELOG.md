@@ -1,3 +1,7 @@
+## 18.2.2
+
+* Updates associated with base library updates.
+
 ## 18.2.1
 
 * Updates associated with base library updates.
