@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:simple_3d/simple_3d.dart';
 
 ///
 /// (en)A class for handling 2D vectors. This class acts as Final and cannot change its value.
@@ -146,6 +147,15 @@ class Sp3dV2D {
   /// (ja)オフセットからベクトルに変換します。
   static Sp3dV2D fromOffset(Offset offset) {
     return Sp3dV2D(offset.dx, offset.dy);
+  }
+
+  /// (en)Converts this vector to a three-dimensional vector and returns it.
+  /// The z-axis value is initialized to 0.
+  ///
+  /// (ja)このベクトルを三次元ベクトルに変換して返します。
+  /// z軸の値は0で初期化されます。
+  Sp3dV3D toV3D() {
+    return Sp3dV3D(x, y, 0);
   }
 
   /// (en)Computes and returns the Euclidean distance between

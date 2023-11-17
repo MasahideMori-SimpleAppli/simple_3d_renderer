@@ -1,3 +1,11 @@
+## 18.2.4
+
+* Added toV3D method to Sp3dV2D.
+
+## 18.2.3
+
+* Updates associated with base library updates.
+
 ## 18.2.2
 
 * Updates associated with base library updates.
