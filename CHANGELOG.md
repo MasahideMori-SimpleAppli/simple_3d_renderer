@@ -1,3 +1,7 @@
+## 19.0.1
+
+* Fixing dependencies.
+
 ## 19.0.0
 
 * Updates associated with base library updates.
