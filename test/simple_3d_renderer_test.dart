@@ -84,11 +84,39 @@ void main() {
     expect(p1.angleTo(p3) * 180 / pi == 90, true);
   });
 
-  test('Sp3dV2D distanceTo', () {
+  test('Sp3dV2D distTo', () {
     Sp3dV2D origin = Sp3dV2D(0, 0);
     Sp3dV2D p1 = Sp3dV2D(1, 0);
     Sp3dV2D p2 = Sp3dV2D(0, 5);
-    expect(origin.distanceTo(p1) == 1, true);
-    expect(origin.distanceTo(p2) == 5, true);
+    expect(origin.distTo(p1) == 1, true);
+    expect(origin.distTo(p2) == 5, true);
+  });
+
+  test('Sp3dV2D angleFromLine', () {
+    final double eRange = 0.001;
+    Sp3dV2D p1 = Sp3dV2D(0, 0);
+    Sp3dV2D p2 = Sp3dV2D(1, 1);
+    Sp3dV2D p3 = Sp3dV2D(0, 1);
+    Sp3dV2D p4 = Sp3dV2D(-1, 1);
+    Sp3dV2D p5 = Sp3dV2D(-1, 0);
+    Sp3dV2D p6 = Sp3dV2D(-1, -1);
+    Sp3dV2D p7 = Sp3dV2D(0, -1);
+    Sp3dV2D p8 = Sp3dV2D(1, -1);
+    expect(
+        Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p1), 0, eRange), true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p2), 45, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p3), 90, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p4), 135, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p5), 180, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p6), 225, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p7), 270, eRange),
+        true);
+    expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p8), 315, eRange),
+        true);
   });
 }

@@ -1,3 +1,11 @@
+## 19.0.0
+
+* Updates associated with base library updates.
+* Sp3dV2D's exchangeXY method has been renamed to exchangedXY method.
+* Sp3dV2D's distanceTo method has been renamed to distTo method.
+* Added dot, dotTo and angle methods to Sp3dV2D.
+* Added angleFromLine and errorTolerance method to Sp3dV2D.
+
 ## 18.2.6
 
 * Updates associated with base library updates.

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
+import 'package:util_simple_3d/util_simple_3d.dart';
 
 ///
 /// (en)A class for handling 2D vectors. This class acts as Final and cannot change its value.
@@ -14,7 +15,7 @@ import 'package:simple_3d/simple_3d.dart';
 @immutable
 class Sp3dV2D {
   static const String className = 'Sp3dV2D';
-  static const String version = '8';
+  static const String version = '9';
   final double x;
   final double y;
 
@@ -53,7 +54,7 @@ class Sp3dV2D {
   /// (en)Returns a vector with x and y swapped.
   ///
   /// (ja)xとyを入れ替えたベクトルを返します。
-  Sp3dV2D exchangeXY() {
+  Sp3dV2D exchangedXY() {
     return Sp3dV2D(y, x);
   }
 
@@ -81,6 +82,16 @@ class Sp3dV2D {
   /// (ja)ユークリッド距離を返します。
   static double dist(Sp3dV2D a, Sp3dV2D b) {
     return (a - b).len();
+  }
+
+  /// (en)Computes and returns the Euclidean distance between
+  /// this vector and the specified vector.
+  ///
+  /// (ja)このベクトルと指定ベクトルとの間のユークリッド距離を計算して返します。
+  ///
+  /// * [other] : other vector.
+  double distTo(Sp3dV2D other) {
+    return dist(this, other);
   }
 
   /// (en)Compare while considering the error. Returns true if x, y are all within the e_range.
@@ -118,6 +129,25 @@ class Sp3dV2D {
     return atan2(y, x);
   }
 
+  /// (en)Computes and returns the angle between vectorA
+  /// and the vectorB.
+  /// The unit of the return value is radians.
+  ///
+  /// (ja)このベクトルaとベクトルbとの間の角度を計算して返します。
+  /// 戻り値の単位はラジアンです。
+  ///
+  /// * [a] : vector a.
+  /// * [b] : vector b.
+  /// * [origin] : the origin.
+  static double angle(Sp3dV2D a, Sp3dV2D b,
+      {Sp3dV2D origin = const Sp3dV2D(0, 0)}) {
+    double v1 = (a.x - origin.x) * (b.y - origin.y) -
+        (a.y - origin.y) * (b.x - origin.x);
+    double v2 = (a.x - origin.x) * (b.x - origin.x) +
+        (a.y - origin.y) * (b.y - origin.y);
+    return atan2(v1, v2);
+  }
+
   /// (en)Computes and returns the angle between this vector
   /// and the specified vector.
   /// The unit of the return value is radians.
@@ -128,11 +158,7 @@ class Sp3dV2D {
   /// * [other] : other vector.
   /// * [origin] : the origin.
   double angleTo(Sp3dV2D other, {Sp3dV2D origin = const Sp3dV2D(0, 0)}) {
-    double v1 = (x - origin.x) * (other.y - origin.y) -
-        (y - origin.y) * (other.x - origin.x);
-    double v2 = (x - origin.x) * (other.x - origin.x) +
-        (y - origin.y) * (other.y - origin.y);
-    return atan2(v1, v2);
+    return angle(this, other);
   }
 
   /// (en)Converts this vector to an offset and returns it.
@@ -149,6 +175,20 @@ class Sp3dV2D {
     return Sp3dV2D(offset.dx, offset.dy);
   }
 
+  /// (en)Return dot product.
+  ///
+  /// (ja)ドット積を返します。
+  static double dot(Sp3dV2D a, Sp3dV2D b) {
+    return a.x * b.x + a.y * b.y;
+  }
+
+  /// (en)Return dot product.
+  ///
+  /// (ja)ドット積を返します。
+  double dotTo(Sp3dV2D other) {
+    return dot(this, other);
+  }
+
   /// (en)Converts this vector to a three-dimensional vector and returns it.
   /// The z-axis value is initialized to 0.
   ///
@@ -158,14 +198,31 @@ class Sp3dV2D {
     return Sp3dV3D(x, y, 0);
   }
 
-  /// (en)Computes and returns the Euclidean distance between
-  /// this vector and the specified vector.
+  /// (en)Returns the angle of the line from 0 to 360 degrees.
   ///
-  /// (ja)このベクトルと指定ベクトルとの間のユークリッド距離を計算して返します。
+  /// (ja) 線の角度を0～360度で返します。
   ///
-  /// * [other] : other vector.
-  double distanceTo(Sp3dV2D other) {
-    return (other - this).len();
+  /// * [sp] : Line start point.
+  /// * [ep] : Line end point.
+  static double angleFromLine(Sp3dV2D sp, Sp3dV2D ep) {
+    double r = (ep - sp).direction() / Sp3dConstantValues.toRadian;
+    if (r < 0) {
+      r = 360 + r;
+    }
+    return r;
+  }
+
+  /// (en)This function considers the error in the comparison.
+  /// Returns true if v is within error e_range with respect to c.
+  ///
+  /// (ja)誤差を考慮しつつ比較します。
+  /// vがcに対して誤差e_range以内の場合はtrueを返します。
+  ///
+  /// * [v] : Target value.
+  /// * [c] : Compare value.
+  /// * [eRange] : The range of error to allow. This must be a positive number.
+  static bool errorTolerance(double v, double c, double eRange) {
+    return c - eRange <= v && v <= c + eRange;
   }
 
   Sp3dV2D operator +(Sp3dV2D v) {
