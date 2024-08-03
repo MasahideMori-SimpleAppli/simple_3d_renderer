@@ -11,6 +11,14 @@ Sp3dObjは科学のために作られた3Dフォーマット(Simple 3D Format)�
 [simple_3d](https://pub.dev/packages/simple_3d)  
 [util_simple_3d](https://pub.dev/packages/util_simple_3d)  
 
+Sp3dObjを直接編集することがあるアプリで、Undo, Redo機能を導入したい場合、  
+下記のパッケージが利用できます。
+[file_state_manager](https://pub.dev/packages/file_state_manager)
+
+これは非常に実験的なプロジェクトですが、他の3D形式から変換するためのパッケージもあります。  
+ただし、Sp3dObjは科学用であり、機能に大きな差があるため最低限の互換性のみがサポートされます。  
+[convert_simple_3d](https://pub.dev/packages/convert_simple_3d)
+
 ## 使い方
 ```dart
 import 'package:flutter/material.dart';

@@ -12,6 +12,14 @@ Please refer to the following for the packages to be used together.
 [simple_3d](https://pub.dev/packages/simple_3d)  
 [util_simple_3d](https://pub.dev/packages/util_simple_3d)  
 
+If you want to implement Undo/Redo functionality in an app that directly edits Sp3dObj,  
+you can use the following package.  
+[file_state_manager](https://pub.dev/packages/file_state_manager)
+
+Although this is a very experimental project, there are also packages for converting from other 3D formats.  
+However, Sp3dObj is intended for scientific use and has significant differences in functionality, so only minimal compatibility is supported.  
+[convert_simple_3d](https://pub.dev/packages/convert_simple_3d)
+
 ## Usage
 ```dart
 import 'package:flutter/material.dart';

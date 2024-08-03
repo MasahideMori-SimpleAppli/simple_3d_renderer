@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             children: [
               Sp3dRenderer(
                 const Size(800, 800),
-                Sp3dV2D(400, 400),
+                const Sp3dV2D(400, 400),
                 world,
                 // If you want to reduce distortion, shoot from a distance at high magnification.
                 Sp3dCamera(Sp3dV3D(0, 0, 3000), 6000),

@@ -21,8 +21,8 @@ void main() {
     world = Sp3dWorld.fromDict(world.toDict());
     world.initImages().then((List<Sp3dObj> errorObjs) {
       Sp3dRenderer(
-        Size(800, 800),
-        Sp3dV2D.fromDict(Sp3dV2D(400, 400).toDict()),
+        const Size(800, 800),
+        Sp3dV2D.fromDict(const Sp3dV2D(400, 400).toDict()),
         world,
         camera,
         li,
@@ -32,76 +32,76 @@ void main() {
   });
 
   test('Sp3dV2D rotated', () {
-    Sp3dV2D origin = Sp3dV2D(1, 0);
-    Sp3dV2D p = Sp3dV2D(2, 0);
+    Sp3dV2D origin = const Sp3dV2D(1, 0);
+    Sp3dV2D p = const Sp3dV2D(2, 0);
     expect(
         p
             .rotated(origin, 90 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(1, 1), 0.01),
+            .equals(const Sp3dV2D(1, 1), 0.01),
         true);
     expect(
         p
             .rotated(origin, -90 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(1, -1), 0.01),
+            .equals(const Sp3dV2D(1, -1), 0.01),
         true);
     expect(
         p
             .rotated(origin, 180 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(0, 0), 0.01),
+            .equals(const Sp3dV2D(0, 0), 0.01),
         true);
     expect(
         p
             .rotated(origin, -180 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(0, 0), 0.01),
+            .equals(const Sp3dV2D(0, 0), 0.01),
         true);
-    p = Sp3dV2D(1, 1);
+    p = const Sp3dV2D(1, 1);
     expect(
         p
             .rotated(origin, 90 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(0, 0), 0.01),
+            .equals(const Sp3dV2D(0, 0), 0.01),
         true);
     expect(
         p
             .rotated(origin, -90 * Sp3dConstantValues.toRadian)
-            .equals(Sp3dV2D(2, 0), 0.01),
+            .equals(const Sp3dV2D(2, 0), 0.01),
         true);
   });
 
   test('Sp3dV2D direction', () {
-    Sp3dV2D p1 = Sp3dV2D(1, 0);
-    Sp3dV2D p2 = Sp3dV2D(1, 1);
-    Offset p1o = Offset(1, 0);
-    Offset p2o = Offset(1, 1);
+    Sp3dV2D p1 = const Sp3dV2D(1, 0);
+    Sp3dV2D p2 = const Sp3dV2D(1, 1);
+    Offset p1o = const Offset(1, 0);
+    Offset p2o = const Offset(1, 1);
     expect(p1.direction() == p1o.direction, true);
     expect(p2.direction() == p2o.direction, true);
   });
 
   test('Sp3dV2D angleTo', () {
-    Sp3dV2D p1 = Sp3dV2D(1, 0);
-    Sp3dV2D p2 = Sp3dV2D(1, 1);
-    Sp3dV2D p3 = Sp3dV2D(0, 1);
+    Sp3dV2D p1 = const Sp3dV2D(1, 0);
+    Sp3dV2D p2 = const Sp3dV2D(1, 1);
+    Sp3dV2D p3 = const Sp3dV2D(0, 1);
     expect(p1.angleTo(p2) * 180 / pi == 45, true);
     expect(p1.angleTo(p3) * 180 / pi == 90, true);
   });
 
   test('Sp3dV2D distTo', () {
-    Sp3dV2D origin = Sp3dV2D(0, 0);
-    Sp3dV2D p1 = Sp3dV2D(1, 0);
-    Sp3dV2D p2 = Sp3dV2D(0, 5);
+    Sp3dV2D origin = const Sp3dV2D(0, 0);
+    Sp3dV2D p1 = const Sp3dV2D(1, 0);
+    Sp3dV2D p2 = const Sp3dV2D(0, 5);
     expect(origin.distTo(p1) == 1, true);
     expect(origin.distTo(p2) == 5, true);
   });
 
   test('Sp3dV2D angleFromLine', () {
-    final double eRange = 0.001;
-    Sp3dV2D p1 = Sp3dV2D(0, 0);
-    Sp3dV2D p2 = Sp3dV2D(1, 1);
-    Sp3dV2D p3 = Sp3dV2D(0, 1);
-    Sp3dV2D p4 = Sp3dV2D(-1, 1);
-    Sp3dV2D p5 = Sp3dV2D(-1, 0);
-    Sp3dV2D p6 = Sp3dV2D(-1, -1);
-    Sp3dV2D p7 = Sp3dV2D(0, -1);
-    Sp3dV2D p8 = Sp3dV2D(1, -1);
+    const double eRange = 0.001;
+    Sp3dV2D p1 = const Sp3dV2D(0, 0);
+    Sp3dV2D p2 = const Sp3dV2D(1, 1);
+    Sp3dV2D p3 = const Sp3dV2D(0, 1);
+    Sp3dV2D p4 = const Sp3dV2D(-1, 1);
+    Sp3dV2D p5 = const Sp3dV2D(-1, 0);
+    Sp3dV2D p6 = const Sp3dV2D(-1, -1);
+    Sp3dV2D p7 = const Sp3dV2D(0, -1);
+    Sp3dV2D p8 = const Sp3dV2D(1, -1);
     expect(
         Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p1), 0, eRange), true);
     expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p2), 45, eRange),
