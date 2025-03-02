@@ -119,4 +119,50 @@ void main() {
     expect(Sp3dV2D.errorTolerance(Sp3dV2D.angleFromLine(p1, p8), 315, eRange),
         true);
   });
+
+  test('Sp3dQuaternion serialization test', () {
+    Sp3dQuaternion q1 = Sp3dQuaternion(1, 2, 3, 4);
+    final qDict = q1.toDict();
+    Sp3dQuaternion q2 = Sp3dQuaternion.fromDict(qDict);
+    expect(q1.w == q2.w, true);
+    expect(q1.x == q2.x, true);
+    expect(q1.y == q2.y, true);
+    expect(q1.z == q2.z, true);
+  });
+
+  test('Sp3dCameraRotationController serialization test', () {
+    Sp3dCameraRotationController t1 = Sp3dCameraRotationController(
+        rotationSpeed: 2,
+        sp: const Sp3dV2D(1, 1),
+        axis: Sp3dV3D(2, 3, 4),
+        diff: const Sp3dV2D(2, 2),
+        lastDiff: const Sp3dV2D(2, 2),
+        lookAtTarget: Sp3dV3D(0, 1, 0));
+    final tDict = t1.toDict();
+    Sp3dCameraRotationController t2 =
+        Sp3dCameraRotationController.fromDict(tDict);
+    expect(t1.rotationSpeed == t2.rotationSpeed, true);
+    expect(t1.sp.equals(t2.sp, 0.001), true);
+    expect(t1.axis.equals(t2.axis, 0.001), true);
+    expect(t1.diff.equals(t2.diff, 0.001), true);
+    expect(t1.lastDiff.equals(t2.lastDiff, 0.001), true);
+    expect(t1.lookAtTarget.equals(t2.lookAtTarget, 0.001), true);
+  });
+
+  test('Sp3dFreeLookCamera serialization test', () {
+    Sp3dFreeLookCamera c1 = Sp3dFreeLookCamera(Sp3dV3D(0, 0, 3000), 6000);
+    final cDict = c1.toDict();
+    Sp3dFreeLookCamera c2 = Sp3dFreeLookCamera.fromDict(cDict);
+    // 引数にある変数
+    expect(c1.position.equals(c2.position, 0.001), true);
+    expect(c1.focusLength == c2.focusLength, true);
+    expect(c1.forward.equals(c2.forward, 0.001), true);
+    expect(c1.up.equals(c2.up, 0.001), true);
+    expect(c1.rotateAxis.equals(c2.rotateAxis, 0.001), true);
+    expect(c1.radian == c2.radian, true);
+    expect(c1.isAllDrawn == c2.isAllDrawn, true);
+    // 内部変数系
+    expect(c1.right.equals(c2.right, 0.001), true);
+    expect(c1.rotatedPosition.equals(c2.rotatedPosition, 0.001), true);
+  });
 }

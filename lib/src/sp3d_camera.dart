@@ -3,8 +3,14 @@ import 'sp3d_faceobj.dart';
 import 'sp3d_v2d.dart';
 
 /// (en)It is a camera for shooting Sp3dWorld.
+/// This camera is for bird's-eye view,
+/// if you want to support more advanced operations,
+/// please consider using Sp3dFreeLookCamera.
 ///
 /// (ja)Sp3dWorldの撮影用カメラです。
+/// このカメラは俯瞰用であり、より高度な操作をサポートしたい場合は
+/// Sp3dFreeLookCameraの使用を検討してください。
+///
 ///
 /// Author Masahide Mori
 ///
@@ -12,7 +18,7 @@ import 'sp3d_v2d.dart';
 ///
 class Sp3dCamera {
   static const String className = 'Sp3dCamera';
-  static const String version = '11';
+  static const String version = '12';
 
   Sp3dV3D position;
   double focusLength;
@@ -26,9 +32,12 @@ class Sp3dCamera {
   /// Constructor
   /// * [position] : Camera position in the world.
   /// * [focusLength] : Focus length.
-  /// * [rotateAxis] : The axis of rotation of this camera. Normalization is required. Default value is (1,0,0).
-  /// * [radian] : The rotation angle of this camera. The unit is radians. radian = degree * pi / 180.
-  /// * [isAllDrawn] : If True, Draw all objects. If False, the blind spot from the camera will not be drawn.
+  /// * [rotateAxis] : The axis of rotation of this camera.
+  /// Normalization is required. Default value is (1,0,0).
+  /// * [radian] : The rotation angle of this camera.
+  /// The unit is radians. radian = degree * pi / 180.
+  /// * [isAllDrawn] : If True, Draw all objects.
+  /// If False, the blind spot from the camera will not be drawn.
   Sp3dCamera(this.position, this.focusLength,
       {Sp3dV3D? rotateAxis, this.radian = 0, this.isAllDrawn = false}) {
     this.rotateAxis = rotateAxis ?? Sp3dV3D(1.0, 0.0, 0.0);
@@ -174,7 +183,7 @@ class Sp3dCamera {
             final Sp3dV3D c = Sp3dV3D.ave(v);
             // ここでは回転後の値を使う。
             final double camTheta = Sp3dV3D.dot(n, (c - rotatedPosition).nor());
-            final List<Sp3dV2D> v2dl = _get2dV(face, conv2d);
+            final List<Sp3dV2D> v2dl = get2dV(face, conv2d);
             final double dist = Sp3dV3D.dist(c, rotatedPosition);
             if (isAllDrawn) {
               r.add(Sp3dFaceObj(
@@ -193,7 +202,13 @@ class Sp3dCamera {
     return r;
   }
 
-  List<Sp3dV2D> _get2dV(Sp3dFace face, List<Sp3dV2D> conv2d) {
+  /// (en) Extracts and returns the converted vector per face.
+  ///
+  /// (ja) face単位でコンバート済みのベクトルを取り出して返します。
+  ///
+  /// * [face] : The target.
+  /// * [conv2d ] : Converted vertices.
+  List<Sp3dV2D> get2dV(Sp3dFace face, List<Sp3dV2D> conv2d) {
     List<Sp3dV2D> r = [];
     for (int i in face.vertexIndexList) {
       r.add(conv2d[i]);

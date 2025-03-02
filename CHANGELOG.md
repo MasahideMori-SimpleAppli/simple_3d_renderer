@@ -1,3 +1,14 @@
+## 22.0.0
+
+* Updated about [issue 11](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/issues/11).
+* Added Sp3dFreeLookCamera class. Unlike previous cameras, this camera supports shooting from any position and direction.
+* Added Sp3dQuaternion class.
+* Sp3dCameraRotationController has been updated to support Sp3dFreeLookCamera.
+* Updated associated with base library updates.
+* The change in how color is handled has changed the way light is calculated.
+* The argument of UtilColor's toDark has been changed.
+* Updated minimum SDK version.
+
 ## 21.0.0
 
 * Updates associated with base library updates.

@@ -8,16 +8,23 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late List<Sp3dObj> objs = [];
-  late Sp3dWorld world;
-  bool isLoaded = false;
+  late final List<Sp3dObj> _objs = [];
+  late Sp3dWorld _world;
+  bool _isLoaded = false;
+  // Use the camera that best suits your needs.
+  // This package allows you to customize various movements,
+  // including camera rotation control, by extending the controller class.
+  final Sp3dCamera _camera = Sp3dCamera(Sp3dV3D(0, 0, 1000), 1000);
+  // final Sp3dFreeLookCamera _camera = Sp3dFreeLookCamera(Sp3dV3D(0,0,1000), 1000);
+  final Sp3dCameraRotationController _camRCtrl = Sp3dCameraRotationController();
+  static const Sp3dCameraZoomController _camZCtrl = Sp3dCameraZoomController();
 
   @override
   void initState() {
@@ -29,22 +36,22 @@ class _MyAppState extends State<MyApp> {
     obj.materials[0] = FSp3dMaterial.grey.deepCopy()
       ..strokeColor = const Color.fromARGB(255, 0, 0, 255);
     obj.rotate(Sp3dV3D(1, 1, 0).nor(), 30 * 3.14 / 180);
-    objs.add(obj);
+    _objs.add(obj);
     loadImage();
   }
 
   void loadImage() async {
-    world = Sp3dWorld(objs);
-    world.initImages().then((List<Sp3dObj> errorObjs) {
+    _world = Sp3dWorld(_objs);
+    _world.initImages().then((List<Sp3dObj> errorObjs) {
       setState(() {
-        isLoaded = true;
+        _isLoaded = true;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!isLoaded) {
+    if (!_isLoaded) {
       return MaterialApp(
           title: 'Sp3dRenderer',
           home: Scaffold(
@@ -64,12 +71,14 @@ class _MyAppState extends State<MyApp> {
           body: Column(
             children: [
               Sp3dRenderer(
-                const Size(800, 800),
-                const Sp3dV2D(400, 400),
-                world,
+                const Size(600, 600),
+                const Sp3dV2D(300, 300),
+                _world,
                 // If you want to reduce distortion, shoot from a distance at high magnification.
-                Sp3dCamera(Sp3dV3D(0, 0, 3000), 6000),
+                _camera,
                 Sp3dLight(Sp3dV3D(0, 0, -1), syncCam: true),
+                rotationController: _camRCtrl,
+                zoomController: _camZCtrl,
               ),
             ],
           ),

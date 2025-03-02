@@ -82,12 +82,13 @@ class UtilColor {
   ///
   /// * [c] : src color.
   /// * [level] : Maximum value to subtract from rgb.
+  /// If you want to convert from an Int, divide the Int level by 255.
   ///
   /// Returns Color obj.
-  static Color toDark(Color c, int level) {
-    int r = c.red - level >= 0 ? c.red - level : 0;
-    int g = c.green - level >= 0 ? c.green - level : 0;
-    int b = c.blue - level >= 0 ? c.blue - level : 0;
-    return Color.fromARGB(c.alpha, r, g, b);
+  static Color toDark(Color c, double level) {
+    double r = c.r - level >= 0 ? c.r - level : 0;
+    double g = c.g - level >= 0 ? c.g - level : 0;
+    double b = c.b - level >= 0 ? c.b - level : 0;
+    return Color.from(alpha: c.a, red: r, green: g, blue: b);
   }
 }

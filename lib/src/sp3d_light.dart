@@ -92,12 +92,18 @@ class Sp3dLight {
     }
     // ライトを適用
     final Color bg = material.bg;
-    r.add(Color.fromARGB(bg.alpha, (brightness * bg.red).toInt(),
-        (brightness * bg.green).toInt(), (brightness * bg.blue).toInt()));
+    r.add(Color.from(
+        alpha: bg.a,
+        red: brightness * bg.r,
+        green: brightness * bg.g,
+        blue: brightness * bg.b));
     final Color sc = material.strokeColor;
     if (applyStroke) {
-      r.add(Color.fromARGB(sc.alpha, (brightness * sc.red).toInt(),
-          (brightness * sc.green).toInt(), (brightness * sc.blue).toInt()));
+      r.add(Color.from(
+          alpha: sc.a,
+          red: brightness * sc.r,
+          green: brightness * sc.g,
+          blue: brightness * sc.b));
     } else {
       r.add(sc);
     }

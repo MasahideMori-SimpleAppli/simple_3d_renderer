@@ -17,7 +17,7 @@ import 'sp3d_v2d.dart';
 ///
 class Sp3dOrthographicCamera extends Sp3dCamera {
   static const String className = 'Sp3dOrthographicCamera';
-  static const String version = '3';
+  static const String version = '4';
 
   /// Constructor
   /// * [position] : Camera position in the world.
@@ -25,10 +25,8 @@ class Sp3dOrthographicCamera extends Sp3dCamera {
   /// * [rotateAxis] : The axis of rotation of this camera. Normalization is required. Default value is (1,0,0).
   /// * [radian] : The rotation angle of this camera. The unit is radians. radian = degree * pi / 180.
   /// * [isAllDrawn] : If True, Draw all objects. If False, the blind spot from the camera will not be drawn.
-  Sp3dOrthographicCamera(Sp3dV3D position, double focusLength,
-      {Sp3dV3D? rotateAxis, double radian = 0, bool isAllDrawn = false})
-      : super(position, focusLength,
-            rotateAxis: rotateAxis, radian: radian, isAllDrawn: isAllDrawn);
+  Sp3dOrthographicCamera(super.position, super.focusLength,
+      {super.rotateAxis, super.radian, super.isAllDrawn});
 
   @override
   List<Sp3dV2D> convert(Sp3dObj obj, Sp3dV2D origin) {

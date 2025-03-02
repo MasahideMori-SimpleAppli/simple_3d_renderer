@@ -85,7 +85,7 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [useClipping] : If true, the excess will be clipped.
   /// * [rotationController] : Optional argument if you want more control over the user's camera rotation.
   Sp3dRenderer(this.size, this.worldOrigin, this.world, this.camera, this.light,
-      {Key? key,
+      {super.key,
       this.useUserGesture = true,
       this.allowUserWorldRotation = true,
       this.allowUserWorldZoom = true,
@@ -107,8 +107,7 @@ class Sp3dRenderer extends StatefulWidget {
       this.isMouseScrollSameVector = true,
       this.zoomController = const Sp3dCameraZoomController(),
       this.useClipping = false,
-      Sp3dCameraRotationController? rotationController})
-      : super(key: key) {
+      Sp3dCameraRotationController? rotationController}) {
     this.vn = vn ?? ValueNotifier(0);
     this.rotationController =
         rotationController ?? Sp3dCameraRotationController();

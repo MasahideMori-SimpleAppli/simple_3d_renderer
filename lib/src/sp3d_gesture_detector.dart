@@ -39,7 +39,7 @@ class Sp3dGestureDetector extends StatefulWidget {
   /// * [onScroll] : Callback at user mouse scroll. This returns a diffV with the orientation stored in y. Any other value is zero.
   /// * [behavior] : Specification about the hit judgment area of the child widget.
   const Sp3dGestureDetector(
-      {Key? key,
+      {super.key,
       required this.child,
       this.onPanDown,
       this.onSecondPanDown,
@@ -51,8 +51,7 @@ class Sp3dGestureDetector extends StatefulWidget {
       this.onPinchUpdate,
       this.onPinchEnd,
       this.onScroll,
-      this.behavior = HitTestBehavior.opaque})
-      : super(key: key);
+      this.behavior = HitTestBehavior.opaque});
 
   @override
   State<Sp3dGestureDetector> createState() => _Sp3dGestureDetectorState();

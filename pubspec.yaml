@@ -1,19 +1,19 @@
 name: simple_3d_renderer
 description: Sp3dObj renderer. Includes simple cameras, light, world, and more. It also supports user taps.
-version: 21.0.0
+version: 22.0.0
 repository: https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer
 
 environment:
-  sdk: ">=2.15.0 <4.0.0"
+  sdk: ">=2.17.0 <4.0.0"
   flutter: ">=2.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  simple_3d: ^15.0.0
-  util_simple_3d: ^11.0.0
+  simple_3d: ^16.0.0
+  util_simple_3d: ^12.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
