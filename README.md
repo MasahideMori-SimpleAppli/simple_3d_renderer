@@ -16,6 +16,9 @@ If you want to implement Undo/Redo functionality in an app that directly edits S
 you can use the following package.  
 [file_state_manager](https://pub.dev/packages/file_state_manager)
 
+For examples of using this package, see the following package:  
+[sakura_blizzard](https://pub.dev/packages/sakura_blizzard)
+
 Although this is a very experimental project, there are also packages for converting from other 3D formats.  
 However, Sp3dObj is intended for scientific use and has significant differences in functionality, so only minimal compatibility is supported.  
 [convert_simple_3d](https://pub.dev/packages/convert_simple_3d)

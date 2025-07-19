@@ -15,6 +15,9 @@ Sp3dObjを直接編集することがあるアプリで、Undo, Redo機能を導
 下記のパッケージが利用できます。
 [file_state_manager](https://pub.dev/packages/file_state_manager)
 
+このパッケージを利用したサンプルとしては、以下のパッケージをご覧ください。  
+[sakura_blizzard](https://pub.dev/packages/sakura_blizzard)
+
 これは非常に実験的なプロジェクトですが、他の3D形式から変換するためのパッケージもあります。  
 ただし、Sp3dObjは科学用であり、機能に大きな差があるため最低限の互換性のみがサポートされます。  
 [convert_simple_3d](https://pub.dev/packages/convert_simple_3d)
