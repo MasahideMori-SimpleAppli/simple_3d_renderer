@@ -1,5 +1,5 @@
 import 'package:simple_3d/simple_3d.dart';
-import 'sp3d_v2d.dart';
+import 'package:simple_3d_renderer/src/sp3d_v2d.dart';
 
 ///
 /// (en)An intermediate object for drawing Sp3dFace.

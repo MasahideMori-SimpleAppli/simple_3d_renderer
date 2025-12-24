@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'sp3d_v2d.dart';
+import 'package:simple_3d_renderer/src/sp3d_v2d.dart';
 
 ///
 /// (en)A class for realizing various gesture operations for 3D objects.

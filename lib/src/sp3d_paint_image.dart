@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:simple_3d/simple_3d.dart';
-import 'sp3d_faceobj.dart';
+import 'package:simple_3d_renderer/src/sp3d_faceobj.dart';
 
 /// (en)This is a conversion class for drawing images used inside Sp3dRenderer.
 ///

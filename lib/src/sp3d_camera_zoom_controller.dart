@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'sp3d_camera.dart';
+import 'package:simple_3d_renderer/src/sp3d_camera.dart';
 
 ///
 /// (en)Class for adjusting camera zoom.

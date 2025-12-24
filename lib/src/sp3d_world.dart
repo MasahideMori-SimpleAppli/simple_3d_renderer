@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:simple_3d/simple_3d.dart';
-import 'sp3d_faceobj.dart';
-import 'sp3d_paint_image.dart';
+import 'package:simple_3d_renderer/src/sp3d_faceobj.dart';
+import 'package:simple_3d_renderer/src/sp3d_paint_image.dart';
 
 /// (en)It is a world class for handling multiple Sp3dObj at once.
 ///

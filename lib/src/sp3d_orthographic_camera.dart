@@ -1,7 +1,7 @@
 import 'package:simple_3d/simple_3d.dart';
 
-import 'sp3d_camera.dart';
-import 'sp3d_v2d.dart';
+import 'package:simple_3d_renderer/src/sp3d_camera.dart';
+import 'package:simple_3d_renderer/src/sp3d_v2d.dart';
 
 /// (en)It is a camera for shooting Sp3dWorld.
 /// If use this, to ignore the z-axis value.

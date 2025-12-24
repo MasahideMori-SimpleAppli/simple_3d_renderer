@@ -15,7 +15,7 @@ import 'package:util_simple_3d/util_simple_3d.dart';
 @immutable
 class Sp3dV2D {
   static const String className = 'Sp3dV2D';
-  static const String version = '9';
+  static const String version = '10';
   final double x;
   final double y;
 
@@ -70,6 +70,23 @@ class Sp3dV2D {
     }
   }
 
+  /// (en) Safe normalization for rendering / UI use.
+  /// This method is not intended for mathematical computations.
+  ///
+  /// (ja) 描画・UI用途向けの安全な正規化を行ったベクトルを返します。
+  /// このメソッドは数学的な計算を目的としたものではありません。
+  ///
+  /// * [eps] : Epsilon value.
+  /// Degenerate, NaN, or vectors with a length less than or equal to this value
+  /// are treated as invalid and converted to (0, 0).
+  Sp3dV2D norSafe({double eps = 1e-6}) {
+    final double length = len();
+    if (!length.isFinite || length <= eps) {
+      return Sp3dV2D(0, 0);
+    }
+    return this / length;
+  }
+
   /// (en)Return vector length.
   ///
   /// (ja)長さを返します。
@@ -118,6 +135,13 @@ class Sp3dV2D {
     final double r = diff.len();
     final double theta = atan2(diff.y, diff.x) + radian;
     return Sp3dV2D(origin.x + r * cos(theta), origin.y + r * sin(theta));
+  }
+
+  /// (en)Return true if parameter is all zero, otherwise false.
+  ///
+  /// (ja)全てのパラメータが0であればtrue、それ以外はfalseを返します。
+  bool isZero() {
+    return x == 0 && y == 0;
   }
 
   /// (en)Returns the clockwise angle of this vector.

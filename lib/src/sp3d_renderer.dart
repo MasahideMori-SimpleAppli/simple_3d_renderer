@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simple_3d/simple_3d.dart';
-import '../simple_3d_renderer.dart';
+import 'package:simple_3d_renderer/simple_3d_renderer.dart';
 
 ///
 /// (en)A widget for rendering Sp3dWorld.

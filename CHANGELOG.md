@@ -1,3 +1,9 @@
+## 22.1.0
+
+* Added norSafe() and isZero() methods to Sp3dV2D class for rendering / UI use.
+* Minor internal refactoring without API changes.
+* Updates associated with base library updates.
+
 ## 22.0.2
 
 * Updates associated with base library updates.

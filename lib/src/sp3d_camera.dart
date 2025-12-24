@@ -1,6 +1,6 @@
 import 'package:simple_3d/simple_3d.dart';
-import 'sp3d_faceobj.dart';
-import 'sp3d_v2d.dart';
+import 'package:simple_3d_renderer/src/sp3d_faceobj.dart';
+import 'package:simple_3d_renderer/src/sp3d_v2d.dart';
 
 /// (en)It is a camera for shooting Sp3dWorld.
 /// This camera is for bird's-eye view,

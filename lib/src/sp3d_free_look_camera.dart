@@ -1,5 +1,5 @@
 import 'package:simple_3d/simple_3d.dart';
-import '../simple_3d_renderer.dart';
+import 'package:simple_3d_renderer/simple_3d_renderer.dart';
 
 /// (en)This is a so-called free-look camera,
 /// which allows you to freely set the camera position and direction.
