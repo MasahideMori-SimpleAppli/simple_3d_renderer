@@ -1,3 +1,9 @@
+## 23.0.0
+
+* Improved hash calculation accuracy and collision resistance for `Sp3dV2D`.
+* Improved the performance of the `equals` method for `Sp3dV2D`.
+* Optimized `==` operator performance for `Sp3dV2D` using identical reference checks.
+
 ## 22.1.0
 
 * Added norSafe() and isZero() methods to Sp3dV2D class for rendering / UI use.
@@ -10,13 +16,18 @@
 * Updated README.
 
 ## 22.0.1
-* Updated about [issue 12](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/issues/12).
-* This is a fix for a mismatch between the flutter version this package requests and the actual flutter version required.
+
+* Updated
+  about [issue 12](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/issues/12).
+* This is a fix for a mismatch between the flutter version this package requests and the actual
+  flutter version required.
 
 ## 22.0.0
 
-* Updated about [issue 11](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/issues/11).
-* Added Sp3dFreeLookCamera class. Unlike previous cameras, this camera supports shooting from any position and direction.
+* Updated
+  about [issue 11](https://github.com/MasahideMori-SimpleAppli/simple_3d_renderer/issues/11).
+* Added Sp3dFreeLookCamera class. Unlike previous cameras, this camera supports shooting from any
+  position and direction.
 * Added Sp3dQuaternion class.
 * Sp3dCameraRotationController has been updated to support Sp3dFreeLookCamera.
 * Updated associated with base library updates.
@@ -94,7 +105,8 @@
 
 ## 18.1.0
 
-* Fixed a bug where image references would be broken when the rendering target contained multiple objects including images.
+* Fixed a bug where image references would be broken when the rendering target contained multiple
+  objects including images.
 * Added angleTo method to Sp3dV2D.
 * Added direction method to Sp3dV2D.
 * Added toOffset method to Sp3dV2D.
@@ -102,7 +114,8 @@
 
 ## 18.0.0
 
-* Transparent backgrounds are now available when setting image files to objects. It can be switched from Sp3dWorld's imageBGisBlack flag.
+* Transparent backgrounds are now available when setting image files to objects. It can be switched
+  from Sp3dWorld's imageBGisBlack flag.
 * Improved object touch detection.
 
 ## 17.0.0

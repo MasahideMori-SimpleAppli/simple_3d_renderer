@@ -15,7 +15,7 @@ import 'package:util_simple_3d/util_simple_3d.dart';
 @immutable
 class Sp3dV2D {
   static const String className = 'Sp3dV2D';
-  static const String version = '10';
+  static const String version = '11';
   final double x;
   final double y;
 
@@ -109,19 +109,6 @@ class Sp3dV2D {
   /// * [other] : other vector.
   double distTo(Sp3dV2D other) {
     return dist(this, other);
-  }
-
-  /// (en)Compare while considering the error. Returns true if x, y are all within the e_range.
-  ///
-  /// (ja)誤差を考慮しつつ比較します。x, y の全てが誤差e_range以内の場合はtrueを返します。
-  ///
-  /// * [other] : other vector.
-  /// * [eRange] : The range of error to allow. This must be a positive number.
-  bool equals(Sp3dV2D other, double eRange) {
-    return x - eRange <= other.x &&
-        other.x <= x + eRange &&
-        y - eRange <= other.y &&
-        other.y <= y + eRange;
   }
 
   /// (en)Returns a new vector that rotates this vector.
@@ -265,22 +252,29 @@ class Sp3dV2D {
     return Sp3dV2D(x / scalar, y / scalar);
   }
 
-  @override
-  bool operator ==(Object other) {
-    if (other is Sp3dV2D) {
-      return x == other.x && y == other.y;
-    } else {
-      return false;
-    }
+  /// (en)Compare while considering the error. Returns true if x, y are all within the e_range.
+  ///
+  /// (ja)誤差を考慮しつつ比較します。x, y の全てが誤差e_range以内の場合はtrueを返します。
+  ///
+  /// * [other] : other vector.
+  /// * [eRange] : The range of error to allow. This must be a positive number.
+  bool equals(Sp3dV2D other, double eRange) {
+    // 1. 同一インスタンスなら即座に true
+    if (identical(this, other)) return true;
+    // 2. 絶対値（abs）を使って「差が eRange 以内か」を判定
+    return (x - other.x).abs() <= eRange && (y - other.y).abs() <= eRange;
   }
 
   @override
-  int get hashCode {
-    int result = 17;
-    result = 37 * result + x.hashCode;
-    result = 37 * result + y.hashCode;
-    return result;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Sp3dV2D &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y);
+
+  @override
+  int get hashCode => Object.hash(x, y);
 
   @override
   String toString() {
