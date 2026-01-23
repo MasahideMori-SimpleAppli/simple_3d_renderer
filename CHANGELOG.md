@@ -1,3 +1,8 @@
+## 23.0.1
+
+* Renamed the argument of the `rotated` method in the `Sp3dV2D` class from `origin` to `center`. There is no change in behavior.
+* Adjustments following updates in the base library (no significant behavior changes).
+
 ## 23.0.0
 
 * Improved hash calculation accuracy and collision resistance for `Sp3dV2D`.

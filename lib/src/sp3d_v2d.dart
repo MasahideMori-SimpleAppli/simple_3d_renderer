@@ -15,7 +15,7 @@ import 'package:util_simple_3d/util_simple_3d.dart';
 @immutable
 class Sp3dV2D {
   static const String className = 'Sp3dV2D';
-  static const String version = '11';
+  static const String version = '12';
   final double x;
   final double y;
 
@@ -115,13 +115,13 @@ class Sp3dV2D {
   ///
   /// (ja)このベクトルを回転した新しいベクトルを返します。
   ///
-  /// * [origin] : the origin of rotation.
+  /// * [center] : center of rotation.
   /// * [radian] : radian = degree * pi / 180.
-  Sp3dV2D rotated(Sp3dV2D origin, double radian) {
-    final Sp3dV2D diff = this - origin;
+  Sp3dV2D rotated(Sp3dV2D center, double radian) {
+    final Sp3dV2D diff = this - center;
     final double r = diff.len();
     final double theta = atan2(diff.y, diff.x) + radian;
-    return Sp3dV2D(origin.x + r * cos(theta), origin.y + r * sin(theta));
+    return Sp3dV2D(center.x + r * cos(theta), center.y + r * sin(theta));
   }
 
   /// (en)Return true if parameter is all zero, otherwise false.
