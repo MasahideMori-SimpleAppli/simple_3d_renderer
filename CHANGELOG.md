@@ -1,3 +1,7 @@
+## 23.0.2
+
+* Improved the speed of the rotated method in the `Sp3dV2D`.
+
 ## 23.0.1
 
 * Renamed the argument of the `rotated` method in the `Sp3dV2D` class from `origin` to `center`. There is no change in behavior.

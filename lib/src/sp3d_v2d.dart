@@ -118,10 +118,14 @@ class Sp3dV2D {
   /// * [center] : center of rotation.
   /// * [radian] : radian = degree * pi / 180.
   Sp3dV2D rotated(Sp3dV2D center, double radian) {
-    final Sp3dV2D diff = this - center;
-    final double r = diff.len();
-    final double theta = atan2(diff.y, diff.x) + radian;
-    return Sp3dV2D(center.x + r * cos(theta), center.y + r * sin(theta));
+    final dx = x - center.x;
+    final dy = y - center.y;
+    final c = cos(radian);
+    final s = sin(radian);
+    return Sp3dV2D(
+      center.x + dx * c - dy * s,
+      center.y + dx * s + dy * c,
+    );
   }
 
   /// (en)Return true if parameter is all zero, otherwise false.
