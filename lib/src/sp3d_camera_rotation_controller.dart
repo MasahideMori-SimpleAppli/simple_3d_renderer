@@ -15,7 +15,7 @@ import 'package:util_simple_3d/util_simple_3d.dart';
 ///
 class Sp3dCameraRotationController {
   static const String className = 'Sp3dCameraRotationController';
-  static const String version = '3';
+  static const String version = '4';
 
   // 回転速度
   double rotationSpeed;
@@ -142,8 +142,14 @@ class Sp3dCameraRotationController {
         angle = 0;
       }
       // 回転軸。xとyを反転させる必要がある。
-      axis = Sp3dV3D(diff.y, diff.x, 0).nor();
-      camera.rotate(axis, angle * Sp3dConstantValues.toRadian);
+      // nor() はゼロベクトルを受け取るとゼロベクトルをそのまま返し、
+      // その後 camera.rotate → rotated → proj のアサートで落ちる。
+      // そのため、正規化前の軸ベクトルの長さを明示的にチェックしてスキップする。
+      final Sp3dV3D rawAxis = Sp3dV3D(diff.y, diff.x, 0);
+      if (rawAxis.len() > 1e-9) {
+        axis = rawAxis.nor();
+        camera.rotate(axis, angle * Sp3dConstantValues.toRadian);
+      }
     }
   }
 

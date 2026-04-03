@@ -1,3 +1,9 @@
+## 23.0.3
+
+* Fixed a crash in `Sp3dCameraRotationController` where rotating with a zero diff vector
+  caused `nor()` to return a zero vector, which then failed the normalization assertion
+  in `Sp3dV3D.proj()` via `camera.rotate()`.
+
 ## 23.0.2
 
 * Improved the speed of the rotated method in the `Sp3dV2D`.
