@@ -67,15 +67,18 @@ class Sp3dFreeLookCamera extends Sp3dCamera {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// Used to restore state.
   static Sp3dFreeLookCamera fromDict(Map<String, dynamic> src) {
     return Sp3dFreeLookCamera(
       Sp3dV3D.fromDict(src['position']),
-      src['focus_length'],
+      _d(src['focus_length']),
       forward: Sp3dV3D.fromDict(src['forward']),
       up: Sp3dV3D.fromDict(src['up']),
       rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),
-      radian: src['radian'],
+      radian: _d(src['radian']),
       isAllDrawn: src.containsKey('is_all_drawn') ? src['is_all_drawn'] : false,
     );
   }

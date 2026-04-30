@@ -83,6 +83,9 @@ class Sp3dCameraRotationController {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// Used to restore state.
   static Sp3dCameraRotationController fromDict(Map<String, dynamic> src) {
     Sp3dV3D mLookAtTarget = Sp3dV3D(0, 0, 0);
@@ -90,7 +93,7 @@ class Sp3dCameraRotationController {
       mLookAtTarget = Sp3dV3D.fromDict(src['look_at_target']);
     }
     return Sp3dCameraRotationController(
-        rotationSpeed: src['rotation_speed'],
+        rotationSpeed: _d(src['rotation_speed']),
         sp: Sp3dV2D.fromDict(src['sp']),
         axis: Sp3dV3D.fromDict(src['axis']),
         diff: Sp3dV2D.fromDict(src['diff']),

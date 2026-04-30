@@ -55,6 +55,9 @@ class Sp3dLight {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// (en)Restore this object from the dictionary.
   ///
   /// (ja)辞書からオブジェクトを復元します。
@@ -62,7 +65,7 @@ class Sp3dLight {
   /// * [src] : A dictionary made with to_dict of this class.
   static Sp3dLight fromDict(Map<String, dynamic> src) {
     return Sp3dLight(Sp3dV3D.fromDict(src['direction']),
-        minBrightness: src['min_brightness'],
+        minBrightness: _d(src['min_brightness']),
         applyStroke: src['apply_stroke'],
         syncCam: src['sync_cam']);
   }

@@ -46,9 +46,12 @@ class Sp3dV2D {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// convert from Map.
   static Sp3dV2D fromDict(Map<String, dynamic> src) {
-    return Sp3dV2D(src['x'], src['y']);
+    return Sp3dV2D(_d(src['x']), _d(src['y']));
   }
 
   /// (en)Returns a vector with x and y swapped.

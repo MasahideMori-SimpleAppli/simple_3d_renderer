@@ -1,3 +1,14 @@
+## 23.0.4
+
+* Fixed a type error in `fromDict` where JSON-decoded integer values were not safely
+  converted to `double` in certain environments (e.g. iOS app mode on macOS).
+    * Affected classes: `Sp3dV2D`, `Sp3dQuaternion`, `Sp3dCamera`,
+      `Sp3dOrthographicCamera`, `Sp3dFreeLookCamera`, `Sp3dLight`,
+      `Sp3dCameraRotationController`.
+    * Added a private helper `_d(dynamic value)` to each class that performs
+      `(value as num).toDouble()`, and applied it to all `double`-typed field assignments
+      in the above `fromDict` methods.
+
 ## 23.0.3
 
 * Fixed a crash in `Sp3dCameraRotationController` where rotating with a zero diff vector

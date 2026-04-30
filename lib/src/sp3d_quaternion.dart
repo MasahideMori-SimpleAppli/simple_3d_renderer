@@ -46,9 +46,13 @@ class Sp3dQuaternion {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// convert from Map.
   static Sp3dQuaternion fromDict(Map<String, dynamic> src) {
-    return Sp3dQuaternion(src['w'], src['x'], src['y'], src['z']);
+    return Sp3dQuaternion(
+        _d(src['w']), _d(src['x']), _d(src['y']), _d(src['z']));
   }
 
   Sp3dQuaternion operator *(Sp3dQuaternion other) {

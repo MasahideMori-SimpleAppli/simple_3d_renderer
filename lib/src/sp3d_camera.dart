@@ -63,11 +63,15 @@ class Sp3dCamera {
     return d;
   }
 
+  /// 変換用
+  static double _d(dynamic value) => (value as num).toDouble();
+
   /// Used to restore state.
   static Sp3dCamera fromDict(Map<String, dynamic> src) {
-    return Sp3dCamera(Sp3dV3D.fromDict(src['position']), src['focus_length'],
+    return Sp3dCamera(
+        Sp3dV3D.fromDict(src['position']), _d(src['focus_length']),
         rotateAxis: Sp3dV3D.fromDict(src['rotate_axis']),
-        radian: src['radian'],
+        radian: _d(src['radian']),
         isAllDrawn:
             src.containsKey('is_all_drawn') ? src['is_all_drawn'] : false);
   }
