@@ -1,3 +1,25 @@
+## 24.0.0
+
+* Added a touch slop to `Sp3dGestureDetector`, so that a stationary touch is no
+  longer treated as a pan.
+    * Previously, a single `PointerMoveEvent` switched the gesture from a tap to a
+      pan. Because some platforms (e.g. Android) report minute pointer movements
+      while the finger is stationary, tapping could invoke `onPanStart` and
+      `onPanEnd` instead of `onPanCancel`, and the resulting pan could have a
+      distance of almost zero.
+    * Pointer movements smaller than the slop are now ignored, and the stored
+      pointer position is not updated for them. The gesture remains a tap, and
+      `onPanCancel` is called on release as before.
+* Added the `touchSlop` argument to `Sp3dGestureDetector` and `Sp3dRenderer`.
+    * If null (the default), the value is resolved automatically. Precise pointers
+      (mouse and stylus) use `kPrecisePointerHitSlop`, and other pointers use the
+      platform value obtained from MediaQuery, or `kTouchSlop` if it is
+      unavailable.
+    * Specify 0 to restore the behavior of version 23 and earlier.
+* Breaking change: the gesture callbacks now behave differently for a touch that
+  moves only slightly. If your app relies on the previous behavior, specify
+  `touchSlop: 0`.
+
 ## 23.0.4
 
 * Fixed a type error in `fromDict` where JSON-decoded integer values were not safely

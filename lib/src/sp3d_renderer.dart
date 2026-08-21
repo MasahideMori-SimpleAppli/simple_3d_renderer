@@ -15,7 +15,7 @@ import 'package:simple_3d_renderer/simple_3d_renderer.dart';
 ///
 class Sp3dRenderer extends StatefulWidget {
   static const String className = 'Sp3dRenderer';
-  static const String version = '18';
+  static const String version = '19';
 
   final Size size;
   final Sp3dV2D worldOrigin;
@@ -47,6 +47,7 @@ class Sp3dRenderer extends StatefulWidget {
   final void Function(Sp3dGestureDetails details)? onPinchEnd;
   final void Function(Sp3dGestureDetails details)? onMouseScroll;
   final HitTestBehavior behavior;
+  final double? touchSlop;
 
   /// Constructor
   /// * [key] : Global Key.
@@ -84,6 +85,16 @@ class Sp3dRenderer extends StatefulWidget {
   /// * [zoomController] : Optional argument if you want non-linear camera zoom behavior.
   /// * [useClipping] : If true, the excess will be clipped.
   /// * [rotationController] : Optional argument if you want more control over the user's camera rotation.
+  /// * [touchSlop] : The minimum distance the pointer must move from the touch
+  /// start position before the gesture is treated as a pan.
+  /// Movements smaller than this value are ignored, and the gesture remains a
+  /// tap. This prevents an unintended pan on devices that report minute
+  /// pointer movements while the finger is stationary.
+  /// If null, this value is resolved automatically. Precise pointers
+  /// (mouse and stylus) use [kPrecisePointerHitSlop], and other pointers use
+  /// the platform value obtained from MediaQuery, or [kTouchSlop] if it is
+  /// unavailable. Specify 0 to disable it (the behavior of version 23 and
+  /// earlier).
   Sp3dRenderer(this.size, this.worldOrigin, this.world, this.camera, this.light,
       {super.key,
       this.useUserGesture = true,
@@ -107,6 +118,7 @@ class Sp3dRenderer extends StatefulWidget {
       this.isMouseScrollSameVector = true,
       this.zoomController = const Sp3dCameraZoomController(),
       this.useClipping = false,
+      this.touchSlop,
       Sp3dCameraRotationController? rotationController}) {
     this.vn = vn ?? ValueNotifier(0);
     this.rotationController =
@@ -265,6 +277,7 @@ class Sp3dRendererState extends State<Sp3dRenderer> {
           }
         },
         behavior: widget.behavior,
+        touchSlop: widget.touchSlop,
         child: CustomPaint(
           painter: _Sp3dCanvasPainter(widget),
           size: widget.size,

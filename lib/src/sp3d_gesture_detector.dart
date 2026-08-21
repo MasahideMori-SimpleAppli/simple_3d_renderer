@@ -25,6 +25,7 @@ class Sp3dGestureDetector extends StatefulWidget {
   final void Function(Sp3dGestureDetails details)? onPinchEnd;
   final void Function(Sp3dGestureDetails details)? onScroll;
   final HitTestBehavior behavior;
+  final double? touchSlop;
 
   /// * [child] : The child widget.
   /// * [onPanDown] : Callback at user touch initiation.
@@ -38,6 +39,16 @@ class Sp3dGestureDetector extends StatefulWidget {
   /// * [onPinchEnd] : Callback at user pinch end.
   /// * [onScroll] : Callback at user mouse scroll. This returns a diffV with the orientation stored in y. Any other value is zero.
   /// * [behavior] : Specification about the hit judgment area of the child widget.
+  /// * [touchSlop] : The minimum distance the pointer must move from the touch
+  /// start position before the gesture is treated as a pan.
+  /// Movements smaller than this value are ignored, and the gesture remains a
+  /// tap. This prevents an unintended pan on devices that report minute
+  /// pointer movements while the finger is stationary.
+  /// If null, this value is resolved automatically. Precise pointers
+  /// (mouse and stylus) use [kPrecisePointerHitSlop], and other pointers use
+  /// the platform value obtained from MediaQuery, or [kTouchSlop] if it is
+  /// unavailable. Specify 0 to disable it (the behavior of version 23 and
+  /// earlier).
   const Sp3dGestureDetector(
       {super.key,
       required this.child,
@@ -51,7 +62,8 @@ class Sp3dGestureDetector extends StatefulWidget {
       this.onPinchUpdate,
       this.onPinchEnd,
       this.onScroll,
-      this.behavior = HitTestBehavior.opaque});
+      this.behavior = HitTestBehavior.opaque,
+      this.touchSlop});
 
   @override
   State<Sp3dGestureDetector> createState() => _Sp3dGestureDetectorState();
@@ -67,8 +79,17 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
   /// マウススクロールに使用するゼロの値
   static const Sp3dV2D _zero = Sp3dV2D(0, 0);
 
+  /// MediaQueryから取得した、この端末のタッチスロップ。
+  /// buildのタイミングで更新されます。
+  double? _deviceTouchSlop;
+
   @override
   Widget build(BuildContext context) {
+    // MediaQueryの参照は、このウィジェットを依存者として登録する副作用を伴う。
+    // 登録はbuild内で行うことが前提のため、イベントハンドラ内では参照しない。
+    // ハンドラ内で参照すると、登録の有無がユーザー操作に左右され、
+    // 端末設定の変更時に再buildされず値が古いままになる可能性がある。
+    _deviceTouchSlop = MediaQuery.maybeGestureSettingsOf(context)?.touchSlop;
     return Listener(
       key: widget.key,
       onPointerDown: _onPointerDown,
@@ -82,6 +103,24 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
       behavior: widget.behavior,
       child: widget.child,
     );
+  }
+
+  /// (en) Returns the slop value applied to the specified pointer kind.
+  ///
+  /// (ja) 指定されたポインタ種別に適用するスロップの値を返します。
+  double _resolveSlop(PointerDeviceKind kind) {
+    final double? v = widget.touchSlop;
+    if (v != null) {
+      return v;
+    }
+    switch (kind) {
+      case PointerDeviceKind.mouse:
+      case PointerDeviceKind.stylus:
+      case PointerDeviceKind.invertedStylus:
+        return kPrecisePointerHitSlop;
+      default:
+        return _deviceTouchSlop ?? kTouchSlop;
+    }
   }
 
   Sp3dGestureDetails _getFirstGestureDetails(
@@ -256,6 +295,14 @@ class _Sp3dGestureDetectorState extends State<Sp3dGestureDetector> {
   void _onPointerMove(PointerMoveEvent event) {
     if (!_touches.containsKey(event.pointer)) {
       return;
+    }
+    if (_gType == EnumGestureType.tapDown) {
+      // スロップ未満の移動は、タップ判定を維持するために無視する。
+      // 保存された位置も更新しないため、無視された移動は無かったことになる。
+      final Offset sP = _touches[event.pointer]!.sP;
+      if ((event.localPosition - sP).distance < _resolveSlop(event.kind)) {
+        return;
+      }
     }
     // must update
     final callbackDetails =
